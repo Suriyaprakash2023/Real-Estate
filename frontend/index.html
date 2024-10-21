@@ -41,32 +41,67 @@
       </div>
     </div>
 
-
+    <!-- <div class="mobile-nav-toggler mobile-button"><span></span></div> -->
 
 <!-- Mobile Menu  --> 
-<div class="close-btn"><span class="icon flaticon-cancel-1"></span></div>    
+<div class="close-btn text-primary"><span class="icon flaticon-cancel-1"></span></div>    
 <div class="mobile-menu">
     <div class="menu-backdrop"></div>                            
     <nav class="menu-box">
-        <div class="nav-logo"><a href=""><img src="images/logo/logo%402x.png" alt="nav-logo" width="174" height="44"></a></div>
+        <div class="nav-logo"><a href=""><img src="/src/assets/images/logo/logocopy.png" alt="nav-logo" width="174" height="44"></a></div>
         <div class="bottom-canvas">
             <div class="login-box flex align-items-center">
-                <a href="#modalLogin" data-bs-toggle="modal">Login</a>
+                <a href="/login" onclick="window.location.href='/contact'" >Login</a>
                 <span>/</span>
-                <a href="#modalRegister" data-bs-toggle="modal">Register</a>
+                <a href="/register" onclick="window.location.href='/register'">Register</a>
             </div>
-            <div class="menu-outer"></div>
-            <div class="button-mobi-sell">
-                <a class="tf-btn primary" href="">Submit Property</a>
-            </div> 
+            <div class="menu-outer">
+              <div class="navbar-collapse collapse clearfix" id="navbarSupportedContent">
+                <ul class="navigation clearfix">
+                    <li class="dropdown2 home current" onclick="window.location.href='/'" style="cursor: pointer;">
+                      <a href="/" onclick="event.preventDefault();">Home</a>
+                    <div class="dropdown2-btn"></div></li>
+                        
+                    <div class="dropdown2-btn"></div></li>
+                    <li class="dropdown2" onclick="window.location.href='/Properties'" style="cursor: pointer;">
+                      <a href="/Properties" onclick="event.preventDefault();">Properties</a>
+                        
+                    <div class="dropdown2-btn"></div></li>
+
+                    <li class="dropdown2" onclick="window.location.href='/about'" style="cursor: pointer;">
+                      <a href="/about" onclick="event.preventDefault();">About</a>
+                        
+                    <div class="dropdown2-btn"></div></li>
+                    
+                    <li class="dropdown2" onclick="window.location.href='/contact'" style="cursor: pointer;">
+                      <a href="/contact" onclick="event.preventDefault();">Contact</a>
+                        
+                      <div class="dropdown2-btn"></div></li>
+                    
+                    
+                    <li class="dropdown2"><a href="#">Dashboard</a>
+                        <ul>
+                            <li><a href="dashboard.html">Dashboard</a></li>
+                            <li><a href="my-favorites.html">My Properties</a></li>
+                            <li><a href="my-invoices.html">My Invoices</a></li>
+                            <li><a href="my-favorites.html">My Favorites</a></li>
+                            <li><a href="reviews.html">Reviews</a></li>
+                            <li><a href="my-profile.html">My Profile</a></li>
+                            <li><a href="add-property.html">Add Property</a></li>
+                        </ul>
+                    <div class="dropdown2-btn"></div></li>
+                </ul>
+            </div>
+            </div>
+            
             <div class="mobi-icon-box">
                 <div class="box d-flex align-items-center">
                     <span class="icon icon-phone2"></span>
-                    <div>1-333-345-6868</div>
+                    <div>+91 9994383989</div>
                 </div>
                 <div class="box d-flex align-items-center">
                     <span class="icon icon-mail"></span>
-                    <div>themesflat@gmail.com</div>
+                    <div>homezen@gmail.com</div>
                 </div>
             </div>
         </div>

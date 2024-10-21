@@ -1,4 +1,4 @@
-import React, { useState,useContext } from "react";
+import React, { useState,useEffect ,useContext } from "react";
 import { Link, useNavigate} from "react-router-dom";
 import logo from "../assets/images/logo/logo@2x.png";
 import AuthContext from '../context/AuthContext';
@@ -12,9 +12,30 @@ const Header = () => {
   
   const { isAuthenticated,userData, logout } = useContext(AuthContext);// Get authentication state and logout function 
 
-  
+  const [menuVisible, setMenuVisible] = useState(false);
+
+  // Toggle the menu visibility
+  const toggleMenu = () => {
+    console.log("hii")
+    setMenuVisible(!menuVisible);
+  };
+
+  // Update the body class when the menu visibility changes
+  useEffect(() => {
+    if (menuVisible) {
+      document.body.classList.add("counter-scroll", "mobile-menu-visible");
+    } else {
+      document.body.classList.remove("counter-scroll", "mobile-menu-visible");
+    }
+
+    // Clean up on unmount or when menuVisible changes
+    return () => {
+      document.body.classList.remove("counter-scroll", "mobile-menu-visible");
+    };
+  }, [menuVisible]);
   return (
     <>
+   
       <header className="main-header fixed-header">
         <div className="header-lower">
           <div className="row">
@@ -154,12 +175,13 @@ const Header = () => {
           </nav>
         </div>
 
-
+        <div className="mobile-nav-toggler mobile-button" onClick={toggleMenu}><span></span></div>
         <MobileNavigation />
+         
                 
       </header>
 
-     
+  
      
     </>
   );

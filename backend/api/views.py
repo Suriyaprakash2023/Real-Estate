@@ -253,3 +253,32 @@ class GuestReview(generics.CreateAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class FavoritePropertys(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        user = Custom_User.objects.get(email=request.user)
+        properties = Properties.objects.filter(favorites=user)
+        serializer = PropertiesSerializer(properties, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        print(request.data,"request.data['property']")
+        user = Custom_User.objects.get(email=request.user)
+        property = Properties.objects.get(id=request.data['propertyId'])
+        if FavoriteProperty.objects.filter(user=user,property=property).exists():
+            print("Property already in favorites")
+            return Response({"message": "Property already in favorites"}, status=status.HTTP_200_OK)
+        else:
+            serializer = FavoritePropertySerializer(data={"user": user.id, "property": property.id})
+            serializer.is_valid()
+            print(serializer.errors, "serializer.errors")
+            serializer.save()
+            print(serializer.errors,"serializer.errors")
+        return Response({"message": "Property added to favorites"}, status=status.HTTP_201_CREATED)
+
+    def delete(self, request):
+        user = Custom_User.objects.get(email=request.user)
+        property = Properties.objects.get(id=request.data['property'])
+        user.favorites.remove(property)
+        return Response({"message": "Property removed from favorites"}, status=status.HTTP_204_NO_CONTENT)

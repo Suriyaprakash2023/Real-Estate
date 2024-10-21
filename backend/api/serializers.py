@@ -78,10 +78,10 @@ class ChangePasswordSerializer(serializers.Serializer):
 
         return attrs
 
-class GetGuestReviewSerializer(serializers.ModelSerializer):
+class FavoritePropertySerializer(serializers.ModelSerializer):
     class Meta:
-        model = GuestReviews
-        fields = ['name', 'email', 'message', 'rating', 'created_at']
+        model = FavoriteProperty
+        fields = ['user', 'property']
 
 class GuestReviewSerializer(serializers.ModelSerializer):
     class Meta:
@@ -109,12 +109,13 @@ class PropertiesSerializer(serializers.ModelSerializer):
     images = PropertyImageSerializer(many=True, read_only=True)
     seller = UserSerializer(read_only=True)
     reviews = GuestReviewSerializer(many=True, read_only=True)
+    favorite_property = FavoritePropertySerializer(many=True, read_only=True)
     class Meta:
         model = Properties
         fields = ['id', 'title', 'description', 'price', 'address', 'city', 'state', 'zipCode', 'country','reviews',
                   'latitude', 'longitude', 'locations', 'propertyType', 'bedrooms', 'bathrooms', 'garages',
                   'totalSqft', 'propertySqft', 'yearBuilt', 'propertyStatus','virtual_tour_bg', 'virtual_tour_url',
-                  'floorPlan','document1', 'document2', 'features', 'status', 'listed_date', 'taxes',
+                  'favorite_property','floorPlan','document1', 'document2', 'features', 'status', 'listed_date', 'taxes',
                   'financing_options','nearbySchool', 'nearbyUniversity', 'nearbyGrocery', 'nearbyMarket',
                   'nearbyHospital', 'nearbyMetro', 'nearbyGym', 'nearbyPark', 'seller', 'agent', 'soldBy', 'soldDate',
                   'images', 'image1', 'image2', 'image3', 'image4', 'image5',]

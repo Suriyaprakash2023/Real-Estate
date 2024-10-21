@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect,useContext , useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import API_BASE_URL from "../context/data";
@@ -17,7 +17,8 @@ import { Navigation, Autoplay } from "swiper/modules";
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import ShareIcon from '@mui/icons-material/Share';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-
+import AuthContext from '../context/AuthContext';
+import Swal from 'sweetalert2';
 const PropertieDetails = () => {
   const { id } = useParams(); // Get the property ID from the URL
   const [error, setError] = useState();
@@ -28,6 +29,8 @@ const PropertieDetails = () => {
   const [loading, setLoading] = useState(true);
   const [review, setReview] = useState();
   const [showMessage, setShowMessage] = useState(false);
+  const [favorites, setFavorites] = useState([]);
+  const { isAuthenticated,userData, logout } = useContext(AuthContext);// Get authentication state and logout function 
   const [customerRequest, setCustomerRequest] = useState({
     full_name: "",
     phone_number: "",
@@ -45,7 +48,7 @@ const PropertieDetails = () => {
 
   const [showAlert, setShowAlert] = useState(true); // Initially show the alert
   const [location, setLocation] = useState({ latitude: null, longitude: null });
-
+  const accessToken = localStorage.getItem('accessToken');
 
   useEffect(() => {
     const getLocation = () => {
@@ -236,6 +239,103 @@ const submitGuestReview = async (e) => {
 };
 
 
+const handleShareClick = () => {
+  Swal.fire({
+    title: 'Share this Property!',
+    html: `
+      <button id="facebook-share" class="swal2-styled btn btn text-white" style="background-color: #3b5998;"><i class="fab fa-facebook"></i> Facebook</button>
+      <button id="twitter-share" class="swal2-styled btn btn text-white" style="background-color: #1da1f2;"><i class="fa-brands fa-x-twitter"></i> Twitter</button>
+      <button id="whatsapp-share" class="swal2-styled  btn btn text-white" style="background-color: #25D366;"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+    `,
+    showConfirmButton: false,
+    didOpen: () => {
+      // Facebook Share
+      document.getElementById('facebook-share').addEventListener('click', () => {
+        window.open('https://www.facebook.com/', '_blank');
+      });
+
+      // Twitter Share
+      document.getElementById('twitter-share').addEventListener('click', () => {
+        window.open('https://twitter.com/', '_blank');
+      });
+
+      // WhatsApp Share
+      document.getElementById('whatsapp-share').addEventListener('click', () => {
+        window.open('https://api.whatsapp.com/', '_blank');
+      });
+    }
+  });
+};
+
+
+const toggleFavorite = (propertyId) => {
+  if (!isAuthenticated) {
+    // Alert the user and navigate to login
+    window.alert('Please log in to add properties to favorites.');
+    return;
+  }
+
+  const isFavorited = favorites.includes(propertyId);
+
+  if (!isFavorited) {
+    setFavorites([...favorites, propertyId]); // Add to favorites
+    handleFavoriteClick(propertyId); // Send API request
+  } else {
+    setFavorites(favorites.filter((id) => id !== propertyId)); // Remove from favorites
+  }
+};
+
+const handleFavoriteClick = async (propertyId) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/favorite_property/`, {
+      propertyId}, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`, // Send token in the header
+        },
+      
+    });
+
+    if (response.status === 201) {
+      console.log('Property favorited successfully:', response.data);
+
+       // Show SweetAlert notification
+       Swal.fire({
+        title: 'Favorited!',
+        html: '<span style="font-size: 100px;" >💚</span> <br/> Property added to your favorite list!',
+        icon: 'success',
+        confirmButtonText: 'Awesome!',
+        customClass: {
+          popup: 'swal-heart-popup' // Optional for custom styling
+        }
+      });
+
+    }else if (response.status === 200) {
+
+      Swal.fire({
+        title: '',
+        html: '<span style="font-size: 100px;" >❤️</span> <br/> Property alredy in your favorite list!',
+        icon: 'warning',
+        confirmButtonText: 'Try Again!',
+        customClass: {
+          popup: 'swal-heart-popup' // Optional for custom styling
+        }
+      });
+
+     }    
+    else {
+      console.error('Failed to favorite the property');
+       // Handle error with SweetAlert
+    Swal.fire({
+      title: 'Error!',
+      text: 'Could not add the property to your favorite list.',
+      icon: 'error',
+      confirmButtonText: 'Try Again'
+    });
+    }
+  } catch (error) {
+    console.error('Error favoriting the property:', error);
+  }
+};
 
 
 
@@ -354,16 +454,21 @@ console.log(review,"review")
 
                   <ul className="icon-box">
                     
-                    <li>
-                      <a href="#" className="item">
-                        
-                        <ShareIcon className="icon icon"/>
-                      </a>
+                  <li className="box-icon w-32" onClick={() => toggleFavorite(property.id)}>
+                    {favorites.includes(property.id) ? (
+                      <FavoriteBorderIcon className="" />
+                    ) : (
+                      <FavoriteBorderIcon className="" />
+                    )}
+                      
                     </li>
-                    <li>
-                      <a href="#" className="item">
-                       <FavoriteBorderIcon className="icon icon" />
-                      </a>
+                    <li className="box-icon w-32">
+                    
+                    <div onClick={handleShareClick} className=" cursor-pointer">
+                    {/* This would be your share icon */}
+                    <ShareIcon className=""/>
+                    {/* <i className="fas fa-share-alt"></i> */}
+                  </div>
                     </li>
                   </ul>
                 </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext ,useEffect } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import slider5 from "../assets/images/slider/slider-5.jpg";
@@ -23,10 +23,14 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 import { Link } from "react-router-dom";
 
+import Swal from 'sweetalert2';
+import heartAnimation from '../assets/images/2764_flat.png';
 import ShareIcon from '@mui/icons-material/Share';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-
+import AuthContext from '../context/AuthContext';
+import '@fortawesome/fontawesome-free/css/all.css';
 const Index = () => {
+  const { isAuthenticated,userData, logout } = useContext(AuthContext);// Get authentication state and logout function 
   const [error, setError] = useState(null);
   const [properties, setProperties] = useState({});
   useEffect(() => {
@@ -94,7 +98,110 @@ const Index = () => {
     };
     getRecommendProperty();
   }, []);
-  console.log(recommendProperty, "recommendProperty");
+
+  const accessToken = localStorage.getItem('accessToken');
+// Function to handle API call with axios
+const handleFavoriteClick = async (propertyId) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/favorite_property/`, {
+      propertyId}, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`, // Send token in the header
+        },
+      
+    });
+
+    if (response.status === 201) {
+      console.log('Property favorited successfully:', response.data);
+
+       // Show SweetAlert notification
+       Swal.fire({
+        title: 'Favorited!',
+        html: '<span style="font-size: 100px;" >💚</span> <br/> Property added to your favorite list!',
+        icon: 'success',
+        confirmButtonText: 'Awesome!',
+        customClass: {
+          popup: 'swal-heart-popup' // Optional for custom styling
+        }
+      });
+
+    }else if (response.status === 200) {
+
+      Swal.fire({
+        title: '',
+        html: '<span style="font-size: 100px;" >❤️</span> <br/> Property alredy in your favorite list!',
+        icon: 'warning',
+        confirmButtonText: 'Try Again!',
+        customClass: {
+          popup: 'swal-heart-popup' // Optional for custom styling
+        }
+      });
+
+     }    
+    else {
+      console.error('Failed to favorite the property');
+       // Handle error with SweetAlert
+    Swal.fire({
+      title: 'Error!',
+      text: 'Could not add the property to your favorite list.',
+      icon: 'error',
+      confirmButtonText: 'Try Again'
+    });
+    }
+  } catch (error) {
+    console.error('Error favoriting the property:', error);
+  }
+};
+
+
+const [favorites, setFavorites] = useState([]);
+
+const toggleFavorite = (propertyId) => {
+  if (!isAuthenticated) {
+    // Alert the user and navigate to login
+    window.alert('Please log in to add properties to favorites.');
+    return;
+  }
+
+  const isFavorited = favorites.includes(propertyId);
+
+  if (!isFavorited) {
+    setFavorites([...favorites, propertyId]); // Add to favorites
+    handleFavoriteClick(propertyId); // Send API request
+  } else {
+    setFavorites(favorites.filter((id) => id !== propertyId)); // Remove from favorites
+  }
+};
+
+
+
+const handleShareClick = () => {
+  Swal.fire({
+    title: 'Share this Property!',
+    html: `
+      <button id="facebook-share" class="swal2-styled btn btn text-white" style="background-color: #3b5998;"><i class="fab fa-facebook"></i> Facebook</button>
+      <button id="twitter-share" class="swal2-styled btn btn text-white" style="background-color: #1da1f2;"><i class="fa-brands fa-x-twitter"></i> Twitter</button>
+      <button id="whatsapp-share" class="swal2-styled  btn btn text-white" style="background-color: #25D366;"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+    `,
+    showConfirmButton: false,
+    didOpen: () => {
+      // Facebook Share
+      document.getElementById('facebook-share').addEventListener('click', () => {
+        window.open('https://www.facebook.com/', '_blank');
+      });
+
+      // Twitter Share
+      document.getElementById('twitter-share').addEventListener('click', () => {
+        window.open('https://twitter.com/', '_blank');
+      });
+
+      // WhatsApp Share
+      document.getElementById('whatsapp-share').addEventListener('click', () => {
+        window.open('https://api.whatsapp.com/', '_blank');
+      });
+    }
+  });
+};
   return (
     <>
       <Header />
@@ -587,12 +694,21 @@ const Index = () => {
                           </ul>
                           <ul className="d-flex gap-4">
                             
-                            <li className="box-icon w-32">
-                            <FavoriteBorderIcon className="text-white"/>
+                            <li className="box-icon w-32" onClick={() => toggleFavorite(property.id)}>
+                            {favorites.includes(property.id) ? (
+                              <FavoriteBorderIcon className="text-white" />
+                            ) : (
+                              <FavoriteBorderIcon className="text-white" />
+                            )}
                               
                             </li>
                             <li className="box-icon w-32">
+                            
+                            <div onClick={handleShareClick} className="text-white cursor-pointer">
+                            {/* This would be your share icon */}
                             <ShareIcon className="text-white"/>
+                            {/* <i className="fas fa-share-alt"></i> */}
+                          </div>
                             </li>
                           </ul>
                         </div>
@@ -742,12 +858,22 @@ const Index = () => {
                               <h5>₹{property.price}</h5>
                             </div>
                             <ul className="d-flex gap-12">
-                              <li className="box-icon w-52">
-                              <FavoriteBorderIcon />
-                              </li>
-                              <li className="box-icon w-52">
-                              <ShareIcon />
-                              </li>
+                            <li className="box-icon w-32" onClick={() => toggleFavorite(property.id)}>
+                            {favorites.includes(property.id) ? (
+                              <FavoriteBorderIcon className="" />
+                            ) : (
+                              <FavoriteBorderIcon className="" />
+                            )}
+                              
+                            </li>
+                            <li className="box-icon w-32">
+                            
+                            <div onClick={handleShareClick} className="cursor-pointer">
+                            {/* This would be your share icon */}
+                            <ShareIcon className=""/>
+                            {/* <i className="fas fa-share-alt"></i> */}
+                          </div>
+                            </li>
                             </ul>
                           </div>
                         </div>

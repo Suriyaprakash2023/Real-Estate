@@ -26,6 +26,7 @@ urlpatterns = [
     path('customer_request/', CustomerRequest.as_view(), name='customer_request'),
     path('recommended_property/', RecommendedProperty.as_view(), name='recommended_property'),
     path('guest_review/', GuestReview.as_view(), name='guest_review'),
+    path('favorite_property/', FavoritePropertys.as_view(), name='favorite_property'),
 
 
 

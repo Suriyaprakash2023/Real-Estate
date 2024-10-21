@@ -3,6 +3,7 @@ import {Link } from 'react-router-dom';
 import axios from 'axios';
 import Header from './Header';
 import Footer from './Footer';
+import registerimage from '../assets/images/banner/vu.jpg'
 const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -43,9 +44,18 @@ const Register = () => {
       <Header/>
       {/* popup register --> */}
 
-        <div className="d-flex justify-content-center">
-          <div className="col-lg-4 col-md-6 col-sm-9 my-5">
-            <div className="flat-account bg-surface">
+        <div className="d-flex justify-content-center" style={{
+                    backgroundImage: `url(${registerimage})`,
+                    backgroundSize: "cover",
+                    // Add other styles if needed
+                  }}>
+          <div className="col-lg-4 col-md-6 col-sm-9 my-5" >
+            <div className="flat-account bg-surface" style={{
+    backgroundColor: "rgba(255, 255, 255, 0.5)", // Semi-transparent background
+    // Optional: Add padding or box-shadow to make the content pop more against the background
+    padding: "20px",
+    borderRadius: "8px", // Optional: Smooth out edges with rounded corners
+  }}>
               <h3 className="title text-center">Register</h3>
               
               <form  onSubmit={handleRegisterSubmit}>
@@ -60,7 +70,10 @@ const Register = () => {
                     name="email"
                     value={email}
                     onChange={(e)=>{setEmail(e.target.value)}}
-                    required
+                    required 
+                    style={{
+                      backgroundColor: "rgba(255, 255, 255, 0.5)", // Semi-transparent background
+                    }}
                   />
                 </fieldset>
                 <fieldset className="box-fieldset">
@@ -76,6 +89,9 @@ const Register = () => {
                     value={mobile_number}
                     onChange={(e)=>{setMobileNumber(e.target.value)}}
                     required
+                    style={{
+                      backgroundColor: "rgba(255, 255, 255, 0.5)", // Semi-transparent background
+                    }}
                   />
                 </fieldset>
                 {/* <fieldset className="box-fieldset">
@@ -111,6 +127,9 @@ const Register = () => {
                       value={password}
                       onChange={(e)=>{setPassword(e.target.value)}}
                       required
+                      style={{
+                        backgroundColor: "rgba(255, 255, 255, 0.5)", // Semi-transparent background
+                      }}
                     />
                     <span className="show-pass2">
                       <i className="icon-pass icon-eye"></i>

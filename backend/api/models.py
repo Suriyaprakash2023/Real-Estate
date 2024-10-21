@@ -245,4 +245,4 @@ class FavoriteProperty(models.Model):
         unique_together = ('user', 'property')  # To ensure a property is favorited only once by a user
 
     def __str__(self):
-        return {self.user.full_name} + " - " + {self.property.title}
+        return self.user.full_name + " - " + self.property.title

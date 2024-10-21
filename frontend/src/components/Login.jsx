@@ -3,7 +3,7 @@ import {useContext} from 'react';
 import {Link } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
-
+import loginimage from '../assets/images/banner/danie.jpg'
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 
@@ -33,9 +33,18 @@ const Login = () => {
       <Header />
          {/* Popup Login */}
       
-        <div className="d-flex justify-content-center">
-          <div className="col-lg-4 col-md-6 col-sm-6 my-5 ">
-            <div className="flat-account bg-surface">
+        <div className="d-flex justify-content-center" style={{
+                    backgroundImage: `url(${loginimage})`,
+                    backgroundSize: "cover",
+                    // Add other styles if needed
+                  }}>
+          <div className="col-lg-4 col-md-6 col-sm-6 my-5 " >
+            <div className="flat-account bg-surface" style={{
+    backgroundColor: "rgba(255, 255, 255, 0.5)", // Semi-transparent background
+    // Optional: Add padding or box-shadow to make the content pop more against the background
+    padding: "20px",
+    borderRadius: "8px", // Optional: Smooth out edges with rounded corners
+  }}>
               <h3 className="title text-center">Log In</h3>
               
 
@@ -52,6 +61,9 @@ const Login = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    style={{
+                      backgroundColor: "rgba(255, 255, 255, 0.5)", // Semi-transparent background
+                    }}
                   />
                 </fieldset>
                 <fieldset className="box-fieldset">
@@ -67,6 +79,9 @@ const Login = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
+                      style={{
+                        backgroundColor: "rgba(255, 255, 255, 0.5)", // Semi-transparent background
+                      }}
                     />
                     <span className="show-pass2">
                       <i className="icon-pass icon-eye"></i>
@@ -80,21 +95,8 @@ const Login = () => {
                     Forgot password?
                   </Link>
                 </div>
-                <div className="text-variant-1 auth-line">or sign up with</div>
-                <div className="login-social">
-                  <a className="btn-login-social">
-                    <img src="/src/assets/images/logo/fb.jpg" alt="img" />
-                    Continue with Facebook
-                  </a>
-                  <a className="btn-login-social">
-                    <img src="/src/assets/images/logo/google.jpg" alt="img" />
-                    Continue with Google
-                  </a>
-                  <a className="btn-login-social">
-                    <img src="/src/assets/images/logo/tw.jpg" alt="img" />
-                    Continue with Twitter
-                  </a>
-                </div>
+               
+                
                 <button type="submit" className="tf-btn primary w-100">
                   Login
                 </button>

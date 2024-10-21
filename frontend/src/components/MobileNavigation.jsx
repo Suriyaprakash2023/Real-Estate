@@ -9,15 +9,16 @@ const MobileNavigation = () => {
 
   return (
     <>
-      <div className="mobile-nav-toggler mobile-button" onClick={toggleMenu}>
+
+      {/* <div className="mobile-nav-toggler mobile-button" onClick={toggleMenu}>
         <span className="icon">☰</span>
-      </div>
+      </div> */}
 
       <div className='mobile-menu active'>
         <div className="menu-backdrop" onClick={toggleMenu}></div>
         <nav className="menu-box">
-          <div className="close-btn" onClick={toggleMenu}>
-            <span className="icon">✕</span>
+          <div className="close-btn text-primary" onClick={toggleMenu}>
+            <span className="icon text-primary" style={{ color: 'red' }}>✕</span>
           </div>
           <div className="nav-logo">
             <a href="">
@@ -49,6 +50,7 @@ const MobileNavigation = () => {
           </div>
         </nav>
       </div>
+     
     </>
   );
 };
