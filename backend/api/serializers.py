@@ -78,6 +78,15 @@ class ChangePasswordSerializer(serializers.Serializer):
 
         return attrs
 
+class GetFavoritePropertySerializer(serializers.ModelSerializer):
+    property = PropertiesSerializer(many=True, read_only=True)
+    class Meta:
+        model = FavoriteProperty
+        fields = ['user','property']
+
+
+
+
 class FavoritePropertySerializer(serializers.ModelSerializer):
     class Meta:
         model = FavoriteProperty

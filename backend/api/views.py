@@ -254,11 +254,16 @@ class GuestReview(generics.CreateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class FavoritePropertys(APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        user = Custom_User.objects.get(email=request.user)
-        properties = Properties.objects.filter(favorites=user)
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        favorite_properties = FavoriteProperty.objects.filter(user=user)
+
+        # Create a list of property details
+        properties = [favorite_property.property for favorite_property in favorite_properties]
+
+        # Serialize the properties
         serializer = PropertiesSerializer(properties, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
