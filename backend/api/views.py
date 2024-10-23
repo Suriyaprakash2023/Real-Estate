@@ -238,10 +238,19 @@ class GuestReview(generics.CreateAPIView):
     permission_classes = (AllowAny,)
 
     def get(self, request):
-        print(request.query_params['property'],"request.query_params")
-        reviews = GuestReviews.objects.filter(property=request.query_params['property'])
-        serializer = GuestReviewSerializer(reviews, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        property=request.query_params['property']
+        print(property,"property")
+        if request.query_params['property'] is not None:
+            print(request.query_params['property'],"request.query_params")
+            reviews = GuestReviews.objects.filter(property=request.query_params['property'])
+            serializer = GuestReviewSerializer(reviews, many=True)
+            print(serializer.data,"serializer.data")
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            seller_instance = Custom_User.objects.get(email=request.user)
+            seller_properties_reviews = GuestReviews.objects.filter(property__seller=seller_instance)
+            serializer = GetGuestReviewSerializer(seller_properties_reviews, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
         data = request.data
@@ -252,6 +261,8 @@ class GuestReview(generics.CreateAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 class FavoritePropertys(APIView):
     permission_classes = [IsAuthenticated]
@@ -282,8 +293,15 @@ class FavoritePropertys(APIView):
             print(serializer.errors,"serializer.errors")
         return Response({"message": "Property added to favorites"}, status=status.HTTP_201_CREATED)
 
-    def delete(self, request):
-        user = Custom_User.objects.get(email=request.user)
-        property = Properties.objects.get(id=request.data['property'])
-        user.favorites.remove(property)
-        return Response({"message": "Property removed from favorites"}, status=status.HTTP_204_NO_CONTENT)
+    def delete(self, request,property_id):
+        user = request.user
+        # property_id = request.data.get("property_id")
+        print(user, "user")
+        print(property_id, "property_id")
+        try:
+            print(property_id,"property_id")
+            favorite_property = FavoriteProperty.objects.get(user=user, property__id=property_id)
+            favorite_property.delete()
+            return Response({"message": "Property removed from favorites"}, status=status.HTTP_204_NO_CONTENT)
+        except FavoriteProperty.DoesNotExist:
+            return Response({"message": "Property not found in favorites"}, status=status.HTTP_404_NOT_FOUND)

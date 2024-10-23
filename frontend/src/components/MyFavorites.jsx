@@ -6,20 +6,25 @@ import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../context/data';
 import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
 import SkipNextIcon from '@mui/icons-material/SkipNext';
+import Swal from 'sweetalert2'; // Import SweetAlert2
+
 const MyFavorites = () => {
     const [properties, setProperties] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1); // Track current page
-    const [propertiesPerPage] = useState(3); // Set how many properties per page
+    const [currentPage, setCurrentPage] = useState(1);
+    const [propertiesPerPage] = useState(3);
     const [isHovered, setIsHovered] = useState(false);
+
     // Fetch the favorite properties
     useEffect(() => {
+        const accessTokennew = localStorage.getItem('accessToken');
+        console.log(accessTokennew,"accessTokennew")
         const fetchFavorites = async () => {
-            try {
-                const accessToken = localStorage.getItem('accessToken'); // Fetch access token
 
+            try {
+                
                 const response = await axios.get(`${API_BASE_URL}/favorite_property/`, {
                     headers: {
-                        'Authorization': `Bearer ${accessToken}`,
+                        'Authorization': `Bearer ${accessTokennew}`,
                     }
                 });
 
@@ -34,6 +39,43 @@ const MyFavorites = () => {
 
         fetchFavorites();
     }, []);
+
+    // Delete a property with confirmation
+    const deleteProperty = async (propertyId) => {
+        // Show SweetAlert confirmation dialog
+        const result = await Swal.fire({
+            title: 'Are you sure..😣',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        });
+
+        if (result.isConfirmed) {
+            try {
+               const accessToken = localStorage.getItem('accessToken');
+               const response = await axios.delete(`${API_BASE_URL}/favorite_property/${propertyId}/`, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                }
+                });
+                if (response.status===204){
+                    setProperties(properties.filter(property => property.id !== propertyId));
+
+                // Show success message
+                Swal.fire('Deleted!', 'Your property has been deleted.', 'success');
+                }
+                
+                // Update state after successful deletion
+                
+            } catch (error) {
+                console.error('Error deleting property:', error);
+                Swal.fire('Error!', 'Failed to delete the property.', 'error');
+            }
+        }
+    };
 
     // Get the properties for the current page
     const indexOfLastProperty = currentPage * propertiesPerPage;
@@ -116,7 +158,12 @@ const MyFavorites = () => {
                                                                 <td>
                                                                     <ul className="list-action">
                                                                         <li>
-                                                                            <button className="btn btn-danger"><i className="icon icon-trash"></i> Remove</button>
+                                                                            <button
+                                                                                className="btn btn-danger"
+                                                                                onClick={() => deleteProperty(property.id)}
+                                                                            >
+                                                                                <i className="icon icon-trash"></i> Remove
+                                                                            </button>
                                                                         </li>
                                                                     </ul>
                                                                 </td>
@@ -133,15 +180,13 @@ const MyFavorites = () => {
                                                         onClick={prevPage}
                                                         disabled={currentPage === 1}
                                                         className="nav-item btn btn"
-
-
                                                         style={{
                                                             width: '30px',
                                                             height: '30px',
                                                             border: 'none',
                                                             borderRadius: '35%',
                                                             padding: '0',
-                                                            backgroundColor: isHovered ? '#FF0000' : '#008000', // Change color on hover
+                                                            backgroundColor: isHovered ? '#FF0000' : '#008000',
                                                             color: 'white',
                                                         }}
                                                     >
@@ -154,7 +199,7 @@ const MyFavorites = () => {
                                                         <a
                                                             href="#"
                                                             className={`nav-item ${index + 1 === currentPage ? 'active' : ''}`}
-                                                            onClick={() => paginate(index + 1)}
+                                                            onClick={() => setCurrentPage(index + 1)}
                                                         >
                                                             {index + 1}
                                                         </a>
@@ -162,23 +207,23 @@ const MyFavorites = () => {
                                                 ))}
 
                                                 <li>
-                                                <button
-                                            onClick={nextPage}
-                                            disabled={currentPage === totalPages}
-                                            onMouseEnter={() => setIsHovered(true)}
-                                            onMouseLeave={() => setIsHovered(false)}
-                                            style={{
-                                                width: '30px',
-                                                height: '30px',
-                                                border: 'none',
-                                                borderRadius: '35%',
-                                                padding: '0',
-                                                backgroundColor: isHovered ? '#FF0000' : '#008000', // Change color on hover
-                                                color: 'white',
-                                            }}
-                                        >
-                                            <SkipNextIcon />
-                                        </button>
+                                                    <button
+                                                        onClick={nextPage}
+                                                        disabled={currentPage === totalPages}
+                                                        onMouseEnter={() => setIsHovered(true)}
+                                                        onMouseLeave={() => setIsHovered(false)}
+                                                        style={{
+                                                            width: '30px',
+                                                            height: '30px',
+                                                            border: 'none',
+                                                            borderRadius: '35%',
+                                                            padding: '0',
+                                                            backgroundColor: isHovered ? '#FF0000' : '#008000',
+                                                            color: 'white',
+                                                        }}
+                                                    >
+                                                        <SkipNextIcon />
+                                                    </button>
                                                 </li>
                                             </ul>
                                         </div>

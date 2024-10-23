@@ -92,6 +92,15 @@ class FavoritePropertySerializer(serializers.ModelSerializer):
         model = FavoriteProperty
         fields = ['user', 'property']
 
+class GetGuestReviewSerializer(serializers.ModelSerializer):
+    property = PropertiesSerializer()
+    class Meta:
+        model = GuestReviews
+        fields = ['name', 'email', 'message','rating', 'property','created_at']
+        extra_kwargs = {
+            'created_at': {'read_only': True}  # Make created_at read-only
+        }
+
 class GuestReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = GuestReviews

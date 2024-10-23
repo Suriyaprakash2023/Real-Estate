@@ -1,6 +1,7 @@
 import React from 'react'
 import Header from './Header';
 import DashboardSideNav from './DashboardSideNav';
+import AddHomeWorkIcon from '@mui/icons-material/AddHomeWork';
 const Dashboard = () => {
   return (
     <>
@@ -18,6 +19,7 @@ const Dashboard = () => {
                             <span className="body-1">Show Dashboard</span>
                         </div>
                         <div className="flat-counter-v2 tf-counter">
+
                             <div className="counter-box">
                                 <div className="box-icon w-68 round">
                                     <span className="icon icon-list-dashes"></span>
@@ -31,18 +33,21 @@ const Dashboard = () => {
 
                                 </div>
                             </div>
+                           
+
                             <div className="counter-box">
                                 <div className="box-icon w-68 round">
-                                    <span className="icon icon-clock-countdown"></span>
+                                <AddHomeWorkIcon  className="icon icon" />
                                 </div>
                                 <div className="content-box">
-                                    <div className="title-count">Pending</div>
+                                    <div className="title-count">Sold Property</div>
                                     <div className="d-flex align-items-end">
-                                        <h6 className="number" data-speed="2000" data-to="0" data-inviewport="yes">0</h6>                                   
+                                        <h6 className="number" data-speed="2000" data-to="1" data-inviewport="yes">1</h6>                                   
                                     </div>                              
 
                                 </div>
                             </div>
+
                             <div className="counter-box">
                                 <div className="box-icon w-68 round">
                                     <span className="icon icon-bookmark"></span>
@@ -69,7 +74,7 @@ const Dashboard = () => {
                             </div>
                         </div>
                         <div className="wrapper-content row">
-                            <div className="col-xl-9">
+                            <div className="col-xl-12">
                                 <div className="widget-box-2 wd-listing">
                                     <h6 className="title">New Listing</h6>
                                     <div className="wd-filter">
@@ -113,141 +118,6 @@ const Dashboard = () => {
                                                             </div>
                                                             <div className="content">
                                                                 <div className="title"><a href="property-details-v1.html" className="link">Gorgeous Apartment Building</a> </div>
-                                                                <div className="text-date"><p className="fw-5"><span className="fw-4 text-variant-1">Posting date:</span> March 22, 2023</p></div>
-                                                                <div className="text-1 fw-7">$5050,00</div> 
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div className="status-wrap">
-                                                            <a href="#" className="btn-status"> Approved</a>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <ul className="list-action">
-                                                            <li><a className="item"><i className="icon icon-edit"></i>Edit</a></li>
-                                                            <li><a className="item"><i className="icon icon-sold"></i>Sold</a></li>
-                                                            <li><a className="remove-file item"><i className="icon icon-trash"></i>Delete</a></li>
-                                                        </ul>
-                                                    </td>
-                                                </tr>
-                                                
-                                                <tr className="file-delete">
-                                                    <td>
-                                                        <div className="listing-box">
-                                                            <div className="images">
-                                                                <img src="images/home/house-2.jpg" alt="images"/>
-                                                            </div>
-                                                            <div className="content">
-                                                                <div className="title"><a href="property-details-v1.html" className="link">Mountain Mist Retreat, Aspen</a> </div>
-                                                                <div className="text-date"><p className="fw-5"><span className="fw-4 text-variant-1">Posting date:</span> March 22, 2023</p></div>
-                                                                <div className="text-1 fw-7">$5050,00</div> 
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div className="status-wrap">
-                                                            <a href="#" className="btn-status"> Approved</a>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <ul className="list-action">
-                                                            <li><a className="item"><i className="icon icon-edit"></i>Edit</a></li>
-                                                            <li><a className="item"><i className="icon icon-sold"></i>Sold</a></li>
-                                                            <li><a className="remove-file item"><i className="icon icon-trash"></i>Delete</a></li>
-                                                        </ul>
-                                                    </td>
-                                                </tr>
-                                               
-                                                <tr className="file-delete">
-                                                    <td>
-                                                        <div className="listing-box">
-                                                            <div className="images">
-                                                                <img src="images/home/house-3.jpg" alt="images"/>
-                                                            </div>
-                                                            <div className="content">
-                                                                <div className="title"><a href="property-details-v1.html" className="link">Lakeview Haven, Lake Tahoe</a> </div>
-                                                                <div className="text-date"><p className="fw-5"><span className="fw-4 text-variant-1">Posting date:</span> March 22, 2023</p></div>
-                                                                <div className="text-1 fw-7">$5050,00</div> 
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div className="status-wrap">
-                                                            <a href="#" className="btn-status"> Approved</a>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <ul className="list-action">
-                                                            <li><a className="item"><i className="icon icon-edit"></i>Edit</a></li>
-                                                            <li><a className="item"><i className="icon icon-sold"></i>Sold</a></li>
-                                                            <li><a className="remove-file item"><i className="icon icon-trash"></i>Delete</a></li>
-                                                        </ul>
-                                                    </td>
-                                                </tr>
-                                              
-                                                <tr className="file-delete">
-                                                <td>
-                                                    <div className="listing-box">
-                                                        <div className="images">
-                                                            <img src="images/home/house-4.jpg" alt="images"/>
-                                                        </div>
-                                                        <div className="content">
-                                                            <div className="title"><a href="property-details-v1.html" className="link">Coastal Serenity Cottage</a> </div>
-                                                            <div className="text-date"><p className="fw-5"><span className="fw-4 text-variant-1">Posting date:</span> March 22, 2023</p></div>
-                                                            <div className="text-1 fw-7">$5050,00</div> 
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div className="status-wrap">
-                                                        <a href="#" className="btn-status"> Approved</a>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <ul className="list-action">
-                                                        <li><a className="item"><i className="icon icon-edit"></i>Edit</a></li>
-                                                        <li><a className="item"><i className="icon icon-sold"></i>Sold</a></li>
-                                                        <li><a className="remove-file item"><i className="icon icon-trash"></i>Delete</a></li>
-                                                    </ul>
-                                                </td>
-                                                </tr>
-                                            
-                                                <tr className="file-delete">
-                                                    <td>
-                                                        <div className="listing-box">
-                                                            <div className="images">
-                                                                <img src="images/home/house-5.jpg" alt="images"/>
-                                                            </div>
-                                                            <div className="content">
-                                                                <div className="title"><a href="property-details-v1.html" className="link">Sunset Heights Estate</a> </div>
-                                                                <div className="text-date"><p className="fw-5"><span className="fw-4 text-variant-1">Posting date:</span> March 22, 2023</p></div>
-                                                                <div className="text-1 fw-7">$5050,00</div> 
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div className="status-wrap">
-                                                            <a href="#" className="btn-status"> Approved</a>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <ul className="list-action">
-                                                            <li><a className="item"><i className="icon icon-edit"></i>Edit</a></li>
-                                                            <li><a className="item"><i className="icon icon-sold"></i>Sold</a></li>
-                                                            <li><a className="remove-file item"><i className="icon icon-trash"></i>Delete</a></li>
-                                                        </ul>
-                                                    </td>
-                                                </tr>
-                                      
-                                                <tr className="file-delete">
-                                                    <td>
-                                                        <div className="listing-box">
-                                                            <div className="images">
-                                                                <img src="images/home/house-8.jpg" alt="images"/>
-                                                            </div>
-                                                            <div className="content">
-                                                                <div className="title"><a href="property-details-v1.html" className="link">Casa Lomas de Machalí Machas</a> </div>
                                                                 <div className="text-date"><p className="fw-5"><span className="fw-4 text-variant-1">Posting date:</span> March 22, 2023</p></div>
                                                                 <div className="text-1 fw-7">$5050,00</div> 
                                                             </div>

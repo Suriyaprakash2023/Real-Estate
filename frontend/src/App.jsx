@@ -12,7 +12,7 @@ import AddProperties from './components/AddProperties.jsx';
 import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
 import PropertyDetails from './components/PropertyDetails.jsx';
-
+import Reviews from './components/Reviews.jsx';
 
 import { AuthProvider} from './context/AuthContext.jsx';
 import ProtectedRoute from './context/ProtectedRoute.jsx';
@@ -38,6 +38,13 @@ function App() {
                   <Dashboard/>
                 </ProtectedRoute>
                 } />
+
+              <Route path="/reviews" element={
+                 <ProtectedRoute>
+                  <Reviews/>
+                </ProtectedRoute>
+                } />
+
               <Route path="/add_properties" element={<AddProperties/>} />
             </Routes>
           </AuthProvider>
