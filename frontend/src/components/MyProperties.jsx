@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import API_BASE_URL from '../context/data';
 import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
 import SkipNextIcon from '@mui/icons-material/SkipNext';
+
+import Swal from 'sweetalert2'; // Import SweetAlert2
 const MyProperties = () => {
     const [properties, setProperties] = useState([]);
     const [currentPage, setCurrentPage] = useState(1); // Track current page
@@ -61,6 +63,81 @@ const MyProperties = () => {
         }
     };
 
+
+
+        // Delete a property with confirmation
+        const deleteProperty = async (propertyId) => {
+            // Show SweetAlert confirmation dialog
+            const result = await Swal.fire({
+                title: 'Are you sure..😣',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            });
+    
+            if (result.isConfirmed) {
+                try {
+                   const accessToken = localStorage.getItem('accessToken');
+                   const response = await axios.delete(`${API_BASE_URL}/properties/${propertyId}/`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                    }
+                    });
+                    if (response.status===204){
+                        setProperties(properties.filter(property => property.id !== propertyId));
+    
+                    // Show success message
+                    Swal.fire('Deleted!', 'Your property has been deleted.', 'success');
+                    }
+                    
+                    // Update state after successful deletion
+                    
+                } catch (error) {
+                    console.error('Error deleting property:', error);
+                    Swal.fire('Error!', 'Failed to delete the property.', 'error');
+                }
+            }
+        };
+        // Delete a property with confirmation
+        const soldProperty = async (propertyId) => {
+            // Show SweetAlert confirmation dialog
+            const result = await Swal.fire({
+                title: 'Are you sure..😍',
+                text: "You won't be able to sold this!",
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#008000',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, sold it!'
+            });
+    
+            if (result.isConfirmed) {
+                try {
+                    const accessToken = localStorage.getItem('accessToken');
+                    console.log(accessToken,"myaccessToken")
+                   const response = await axios.post(`${API_BASE_URL}/my_properties/`,{propertyId}, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                    });
+                    if (response.status===200){
+    
+                    // Show success message
+                    Swal.fire('Solded!', 'Your property has been Sold.', 'success');
+                    }
+                    
+                    // Update state after successful deletion
+                    
+                } catch (error) {
+                    console.error('Error sold property:', error);
+                    Swal.fire('Error!', 'Failed to sold the property.', 'error');
+                }
+            }
+        };
     return (
         <>
             <body className="body bg-surface">
@@ -144,8 +221,15 @@ const MyProperties = () => {
                                                                 <td>
                                                                     <ul className="list-action">
                                                                         <li><a className="item"><i className="icon icon-edit"></i>Edit</a></li>
-                                                                        <li><a className="item"><i className="icon icon-sold"></i>Sold</a></li>
-                                                                        <li><a className="remove-file item"><i className="icon icon-trash"></i>Delete</a></li>
+                                                                        <li><a className="btn btn-success" onClick={() => soldProperty(property.id)}><i className="icon icon-sold"></i>Sold</a></li>
+                                                                        <li>
+                                                                            <button
+                                                                                className="btn btn-danger"
+                                                                                onClick={() => deleteProperty(property.id)}
+                                                                            >
+                                                                                <i className="icon icon-trash"></i> Remove
+                                                                            </button>
+                                                                        </li>
                                                                     </ul>
                                                                 </td>
                                                             </tr>

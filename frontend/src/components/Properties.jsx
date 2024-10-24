@@ -8,7 +8,7 @@ import {Link} from 'react-router-dom';
 import {API_BASE_URL } from '../context/data';
 
 import ShareIcon from '@mui/icons-material/Share';
-import SmoothSharePopup from './SmoothSharePopup';
+// import SmoothSharePopup from './SmoothSharePopup';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import AuthContext from '../context/AuthContext';
 import Swal from 'sweetalert2';
@@ -19,6 +19,11 @@ const Properties = () => {
     const [properties, useProperties] = useState({});
     const [showAlert, setShowAlert] = useState(true); // Initially show the alert
     const accessToken = localStorage.getItem('accessToken');
+
+
+
+
+    
   useEffect(() => {
     const myPropertydata = async () => {
       try {
@@ -73,23 +78,45 @@ const Properties = () => {
     });
   };
   
-  
-  const toggleFavorite = (propertyId) => {
-    if (!isAuthenticated) {
-      // Alert the user and navigate to login
-      window.alert('Please log in to add properties to favorites.');
-      return;
-    }
-  
-    const isFavorited = favorites.includes(propertyId);
-  
-    if (!isFavorited) {
-      setFavorites([...favorites, propertyId]); // Add to favorites
-      handleFavoriteClick(propertyId); // Send API request
-    } else {
-      setFavorites(favorites.filter((id) => id !== propertyId)); // Remove from favorites
-    }
-  };
+      // Toggle favorite status
+      const toggleFavorite = (propertyId) => {
+        if (favorites.includes(propertyId)) {
+            // Unlike (Remove from favorites)
+            const response =  axios.delete(`${API_BASE_URL}/favorite_property/${propertyId}`,{
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    // Include any necessary authorization headers, e.g.:
+                    'Authorization': `Bearer ${accessToken}`
+                }})
+                if (response.status === 204  ){
+                    console.log("fgrggg")
+                    
+                }else{
+                    console.log("fgrggg")
+                  
+                }
+        } else {
+            // Like (Add to favorites)
+           const response = axios.post(`${API_BASE_URL}/favorite_property/`, { propertyId },{
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                // Include any necessary authorization headers, e.g.:
+                'Authorization': `Bearer ${accessToken}`
+              }
+           })
+                if (response.status === 200){
+                    console.log("fgrggg")
+                    setFavorites([...favorites, propertyId]);
+                }else if(response.status === 201){
+                    console.log("fgrggg")
+                    setFavorites([...favorites, propertyId]);
+                }
+                
+                
+        }
+    };
+
+ 
   
   const handleFavoriteClick = async (propertyId) => {
     try {
@@ -190,7 +217,7 @@ const Properties = () => {
                                                         <div className="inner-group inner-filter">
                                                             <div className="form-style">
                                                                 <label className="title-select">Keyword</label>
-                                                                <input type="text" className="form-control" placeholder="Search Keyword." value="" name="s" title="Search for" required=""/>
+                                                                <input type="text" className="form-control" placeholder="Search Keyword." name="s" title="Search for" required/>
                                                             </div>
                                                             <div className="form-style">
                                                                 <label className="title-select">Location</label>
@@ -431,92 +458,81 @@ const Properties = () => {
                         <div className="col-xl-8 col-lg-8">
                             <div className="tab-content">
                                 <div className="tab-pane fade active show" id="gridLayout" role="tabpanel">
-                                    <div className="row">
-                                    {Array.isArray(properties) && properties.map((property) => (
-                                        <div className="col-xl-4 col-lg-6" key={property.id}>
-                                        
-                                                <div className="homeya-box">
-                                                    <div className="archive-top">
-                                                        <a className="images-group">
-                                                            <div className="images-style">
-                                                                <img src={`${API_BASE_URL}/${property.images[0].image1}`} alt="img"/>
-                                                            </div>
-                                                            <div className="top">
-                                                                <ul className="d-flex gap-8">
-                                                                    <li className="flag-tag success"> For Sale</li>
-                                                                    
-                                                                </ul>
-                                                                <ul className="d-flex gap-4">
-                                                                    
-                                                                <li className="box-icon w-32" onClick={() => toggleFavorite(property.id)}>
-                                                                    {favorites.includes(property.id) ? (
-                                                                    <FavoriteBorderIcon className="text-white" />
-                                                                    ) : (
-                                                                    <FavoriteBorderIcon className="text-white" />
-                                                                    )}
-                                                                    
-                                                                </li>
-                                                                <li className="box-icon w-32">
-                                                                    
-                                                                    <div onClick={handleShareClick} className="cursor-pointer">
-                                                                    {/* This would be your share icon */}
-                                                                    <ShareIcon className="text-white"/>
-                                                                    {/* <i className="fas fa-share-alt"></i> */}
-                                                                    </div>
-                                                                </li>
-                                                                                                                    
-                                                                </ul>
-                                                            </div>
-                                                            <div className="bottom">
-                                                                <span className="flag-tag style-2"> {property.propertyType}</span>
-                                                            </div>
-                                                        </a>
-                                                        <div className="content">
-                                                            <div className="h7 text-capitalize fw-7">
-                                                                <a className="link"> 
-                                                            <Link
-                                                                to={`/property_details/${property.id}`}
-                                                                className="link"
-                                                                >
-                                                                {property.title.slice(0, 35)}
-                                                            </Link>
-                                                            </a>
-                                                            </div>
-                                                            <div className="desc"><i className="fs-16 icon icon-mapPin"></i><p> {property.address}</p> </div>
-                                                            <ul className="meta-list">
-                                                                <li className="item">
-                                                                    <i className="icon icon-bed"></i>
-                                                                    <span>{property.bedrooms}</span>
-                                                                </li>
-                                                                <li className="item">
-                                                                    <i className="icon icon-bathtub"></i>
-                                                                    <span>{property.bathrooms}</span>
-                                                                </li>
-                                                                <li className="item">
-                                                                    <i className="icon icon-ruler"></i>
-                                                                    <span>{property.propertySqft}SqFT</span>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                    <div className="archive-bottom d-flex justify-content-between align-items-center">
-                                                        <div className="d-flex gap-8 align-items-center">
-                                                            <div className="avatar avt-40 round">
-                                                            
-                                                                <img src={`${API_BASE_URL}${property.seller.profilePicture}`} alt="avt"/>
-                                                            </div>
-                                                            <span>Arlene McCoy</span>
-                                                        </div>
-                                                        <div className="d-flex align-items-center">
-                                                            <h6>₹{property.price}</h6>
-                                                            
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                       
-                                        </div>
-                                        ))} 
-                                    </div>
+                                <div className="row">
+            {Array.isArray(properties) && properties.map((property) => (
+                <div className="col-xl-4 col-lg-6" key={property.id}>
+                    <div className="homeya-box">
+                        <div className="archive-top">
+                            <a className="images-group">
+                                <div className="images-style">
+                                    <img src={`${API_BASE_URL}/${property.images[0].image1}`} alt="img" />
+                                </div>
+                                <div className="top">
+                                    <ul className="d-flex gap-8">
+                                        <li className="flag-tag success">For Sale</li>
+                                    </ul>
+                                    <ul className="d-flex gap-4">
+                                        <li className="box-icon w-32" onClick={() => toggleFavorite(property.id)}>
+                                            {favorites.includes(property.id) ? (
+                                                <FavoriteBorderIcon className="text-white" style={{ color: 'red' }} />
+                                            ) : (
+                                                <FavoriteBorderIcon className="text-white" />
+                                            )}
+                                        </li>
+                                        <li className="box-icon w-32">
+                                            <div onClick={handleShareClick} className="cursor-pointer">
+                                                <ShareIcon className="text-white" />
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div className="bottom">
+                                    <span className="flag-tag style-2"> {property.propertyType}</span>
+                                </div>
+                            </a>
+                            <div className="content">
+                                <div className="h7 text-capitalize fw-7">
+                                    <a className="link">
+                                        <Link
+                                            to={`/property_details/${property.id}`}
+                                            className="link"
+                                        >
+                                            {property.title.slice(0, 35)}
+                                        </Link>
+                                    </a>
+                                </div>
+                                <div className="desc"><i className="fs-16 icon icon-mapPin"></i><p> {property.address}</p></div>
+                                <ul className="meta-list">
+                                    <li className="item">
+                                        <i className="icon icon-bed"></i>
+                                        <span>{property.bedrooms}</span>
+                                    </li>
+                                    <li className="item">
+                                        <i className="icon icon-bathtub"></i>
+                                        <span>{property.bathrooms}</span>
+                                    </li>
+                                    <li className="item">
+                                        <i className="icon icon-ruler"></i>
+                                        <span>{property.propertySqft}SqFT</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div className="archive-bottom d-flex justify-content-between align-items-center">
+                            <div className="d-flex gap-8 align-items-center">
+                                <div className="avatar avt-40 round">
+                                    <img src={`${API_BASE_URL}${property.seller.profilePicture}`} alt="avt" />
+                                </div>
+                                <span>{property.seller.full_name}</span>
+                            </div>
+                            <div className="d-flex align-items-center">
+                                <h6>₹{property.price}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ))}
+        </div>
                                     <ul className="wd-navigation">
                                         <li><a  className="nav-item active">1</a></li>
                                         <li><a  className="nav-item">2</a></li>

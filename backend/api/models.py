@@ -111,7 +111,6 @@ class Agents(models.Model):
     def current_properties(self):
         return self.properties.filter(status='available').count()
 
-    # Method to count properties sold by the agent
     def properties_sold(self):
         return self.sold_properties.count()
 
@@ -170,7 +169,7 @@ class Properties(models.Model):
     seller = models.ForeignKey(Custom_User, related_name='properties', on_delete=models.CASCADE, null=True, blank=True)
 
     agent = models.ForeignKey('Agents', related_name='properties', on_delete=models.CASCADE, null=True, blank=True)  # Current handling agent
-    soldBy = models.ForeignKey('Agents', related_name='sold_properties', on_delete=models.SET_NULL, null=True, blank=True)  # Agent who sold the property
+    # soldBy = models.ForeignKey('Agents', related_name='sold_properties', on_delete=models.SET_NULL, null=True, blank=True)  # Agent who sold the property
 
      # Timestamps
     soldDate = models.DateTimeField(null=True, blank=True)

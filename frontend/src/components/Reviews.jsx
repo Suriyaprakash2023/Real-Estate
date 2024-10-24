@@ -7,11 +7,13 @@ import API_BASE_URL from '../context/data';
 import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
 import SkipNextIcon from '@mui/icons-material/SkipNext';
 import ReplyIcon from '@mui/icons-material/Reply';
+import Swal from 'sweetalert2'; 
+
 const Reviews = () => {
 
   const [properties, setProperties] = useState([]);
   const [currentPage, setCurrentPage] = useState(1); // Track current page
-  const [propertiesPerPage] = useState(3); // Set how many properties per page
+  const [propertiesPerPage] = useState(5); // Set how many properties per page
   const [isHovered, setIsHovered] = useState(false);
   // Fetch properties on component mount
   useEffect(() => {
@@ -62,6 +64,26 @@ console.log(properties,"properties")
           setCurrentPage(currentPage - 1);
       }
   };
+
+
+
+  const handleSendMessage = (propertyId, message) => {
+    try{
+        const response =  axios.post(`properties/${propertyId}/replay`, { message })
+        
+        if(response.status === 200){
+            Swal.fire('Sent!', 'Your reply has been sent successfully.', 'success');
+        }else{
+            Swal.fire('Error', 'There was a problem sending your reply.', 'error');
+        }
+            
+    }catch{
+        console.log('replay not send..!')
+    }
+
+};
+
+
   return (
     <>
     <body className="body bg-surface">
@@ -83,36 +105,49 @@ console.log(properties,"properties")
                                                             <th>Properties</th>
                                                             <th>Review at</th>
                                                             <th>Message</th>
-                                                            <th>action</th>
+                                                            <th>Sender</th>
                                                            
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {currentProperties.map((property) => (
-                                                            <tr className="file-delete" key={property.id}>
-                                                                <td style={{ width: '300px'}}>
-                                                                      <Link to={`/property_details/${property.id}`} className='link' >
-                                                                          <p><strong>{property.title}</strong></p>
-                                                                      </Link>
-                                                                       
-                                                                </td>
-                                                                <td>
-                                                                    <span>{property.listed_date}</span>
-                                                                </td>
-                                                                <td>
-                                                                    <div className="status-wrap">
-                                                                        <a href="#" className="btn-status">{property.propertyStatus}</a>
-                                                                    </div>
-                                                                </td>
-                                                                
-                                                                <td>
-                                                                    <ul className="" style={{ width: '300px', display: 'flex', gap: '10px', padding: 0, listStyle: 'none' }}>
-                                                                        <li><button className="item btn btn-warning text-white"><ReplyIcon className="text-dark" />Replay</button></li>
-                                                                        <li><button className="remove-file item btn btn-danger"><i className="icon icon-trash "></i>Delete</button></li>
-                                                                    </ul>
-                                                                </td>
-                                                            </tr>
-                                                        ))}
+                                                    {currentProperties.map((property) => (
+                                                    <tr className="file-delete" key={property.id}>
+                                                        <td style={{ width: '300px' }}>
+                                                            <Link to={`/property_details/${property.id}`} className='link'>
+                                                                <p><strong>{property.property.title}</strong></p>
+                                                            </Link>
+                                                        </td>
+                                                        <td>
+                                                            <span>{property.created_at.slice(0, 17)}</span>
+                                                        </td>
+                                                        <td>
+                                                            <div className="status-wrap">
+                                                                {property.message.length > 20 ? (
+                                                                    <>
+                                                                        {property.message.slice(0, 20)}...
+                                                                        <button 
+                                                                            className="btn btn-link p-0" 
+                                                                            style={{ textDecoration: 'underline', color: 'blue' }}
+                                                                            onClick={() => Swal.fire({
+                                                                                title: 'Full Message',
+                                                                                text: property.message,
+                                                                                iconHtml: '<i class="fa-solid fa-envelope"></i>', // Custom envelope icon
+                                                                               
+                                                                                showCancelButton: true,
+                                                                               
+                                                                            })}
+                                                                        >
+                                                                            Read More
+                                                                        </button>
+                                                                    </>
+                                                                ) : (
+                                                                    property.message
+                                                                )}
+                                                            </div>
+                                                        </td>
+                                                        <td>{property.email}</td>
+                                                    </tr>
+                                                ))}
                                                     </tbody>
                                                 </table>
                                             </div>

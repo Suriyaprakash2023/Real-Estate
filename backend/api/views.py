@@ -156,9 +156,26 @@ class UserPropertyView(APIView):
 
     def get(self, request):
         seller = Custom_User.objects.get(email=request.user)
-        properties = Properties.objects.filter(seller=seller).prefetch_related('images')
+        properties = Properties.objects.filter(seller=seller,status='Available').prefetch_related('images')
         serializer = PropertiesSerializer(properties, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        data = request.data
+        print(request.data,"request.data")
+        # Implement the logic for updating the property here
+        try:
+            user = Custom_User.objects.filter(email=request.user)
+            property = Properties.objects.get(id=data['propertyId'])
+            # property.soldBy = request.user
+            property.status = 'Sold'
+            property.soldDate= datetime.now()
+            property.save()
+            return Response({"message": "Property Sold Successfully.."},status=status.HTTP_200_OK)
+
+        except Properties.DoesNotExist:
+            return Response({"error": "Property not found."}, status=status.HTTP_404_NOT_FOUND)
+
 
 class PropertyView(generics.ListAPIView):
     permission_classes = (AllowAny,)
@@ -167,6 +184,11 @@ class PropertyView(generics.ListAPIView):
         serializer = PropertiesSerializer(properties, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+    def delete(self, request, property_id):
+        property = Properties.objects.get(id=property_id)
+        property.delete()
+        return Response({"message": "Property deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
 class PropertyDetails(APIView):
     permission_classes = (AllowAny,)
@@ -184,17 +206,17 @@ class PropertyDetails(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, id):
-        property = Properties.objects.get(id=id)
-        property.delete()
-        return Response({"message": "Property deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
 
-class CustomerRequest(APIView):
+
+class CustomerRequests(APIView):
     permission_classes = (AllowAny,)
     def get(self, request):
-        requests = CustomerRequest.objects.all()
-        serializer = CustomerRequestSerializer(requests, many=True)
+        current_seller = request.user
+        seller_properties = Properties.objects.filter(seller=current_seller)
+
+        current_requests = CustomerRequest.objects.filter(property__in=seller_properties)
+        serializer = GetCustomerRequestSerializer(current_requests, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
@@ -216,7 +238,7 @@ class RecommendedProperty(generics.ListAPIView):
         if request.user.is_authenticated:
             try:
                 user = Custom_User.objects.get(email=request.user.email)
-                properties = Properties.objects.filter(city=user.city)
+                properties = Properties.objects.filter(city=user.city,status='Available')
                 serializer = PropertiesSerializer(properties, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             except Custom_User.DoesNotExist:
@@ -238,19 +260,23 @@ class GuestReview(generics.CreateAPIView):
     permission_classes = (AllowAny,)
 
     def get(self, request):
-        property=request.query_params['property']
-        print(property,"property")
-        if request.query_params['property'] is not None:
-            print(request.query_params['property'],"request.query_params")
-            reviews = GuestReviews.objects.filter(property=request.query_params['property'])
+        property_id = request.query_params.get('property')
+
+        if property_id is not None:
+            print(property_id, "property")
+            print(request.query_params, "request.query_params")
+            reviews = GuestReviews.objects.filter(property=property_id)
             serializer = GuestReviewSerializer(reviews, many=True)
-            print(serializer.data,"serializer.data")
+            print(serializer.data, "serializer.data")
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
-            seller_instance = Custom_User.objects.get(email=request.user)
-            seller_properties_reviews = GuestReviews.objects.filter(property__seller=seller_instance)
-            serializer = GetGuestReviewSerializer(seller_properties_reviews, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            try:
+                seller_instance = Custom_User.objects.get(email=request.user)
+                seller_properties_reviews = GuestReviews.objects.filter(property__seller=seller_instance)
+                serializer = GetGuestReviewSerializer(seller_properties_reviews, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except Custom_User.DoesNotExist:
+                return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request):
         data = request.data

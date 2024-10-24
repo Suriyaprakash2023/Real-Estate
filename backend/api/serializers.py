@@ -135,7 +135,7 @@ class PropertiesSerializer(serializers.ModelSerializer):
                   'totalSqft', 'propertySqft', 'yearBuilt', 'propertyStatus','virtual_tour_bg', 'virtual_tour_url',
                   'favorite_property','floorPlan','document1', 'document2', 'features', 'status', 'listed_date', 'taxes',
                   'financing_options','nearbySchool', 'nearbyUniversity', 'nearbyGrocery', 'nearbyMarket',
-                  'nearbyHospital', 'nearbyMetro', 'nearbyGym', 'nearbyPark', 'seller', 'agent', 'soldBy', 'soldDate',
+                  'nearbyHospital', 'nearbyMetro', 'nearbyGym', 'nearbyPark', 'seller', 'agent', 'soldDate',
                   'images', 'image1', 'image2', 'image3', 'image4', 'image5',]
 
     def create(self, validated_data):
@@ -166,3 +166,8 @@ class CustomerRequestSerializer(serializers.ModelSerializer):
         fields = ['full_name','phone_number', 'email', 'message', 'property']
 
 
+class GetCustomerRequestSerializer(serializers.ModelSerializer):
+    property = PropertiesSerializer()
+    class Meta:
+        model = CustomerRequest
+        fields = ['full_name','phone_number', 'email', 'message', 'property']
