@@ -55,7 +55,10 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
     def post(self, request, *args, **kwargs):
+        users= Custom_User.objects.get(email=request.data['email'])
+        print(users,"userskjlkljkljjlkj")
         serializer = self.get_serializer(data=request.data)
+        print(serializer)
         if serializer.is_valid():
             serializer.is_valid(raise_exception=True)
 
@@ -68,12 +71,13 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             # Serialize the user object
             user_serializer = UserSerializer(user)
             data = user_serializer.data
-
+            print(data,"data")
             data["tokens"] = {"refresh": str(token), "access": str(token.access_token)}
 
             return Response(data, status=status.HTTP_200_OK)
 
         else:
+            print(serializer.errors,"the error")
             return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
 class UserLogoutAPIView(GenericAPIView):

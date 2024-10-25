@@ -42,11 +42,16 @@ export const AuthProvider = ({ children }) => {
   // Async login function
   const login = async (email, password) => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/login/`, { email, password });
+      const response = await axios.post(`${API_BASE_URL}/login/`, { email, password },{
+        // header:{
+        //   "Content-Type":"Json/"
+        // }
+      });
       
+      const { tokens, user } = response.data;
       localStorage.setItem('token', response.data.tokens);
       localStorage.setItem('accessToken', response.data.tokens.access);
-      console.log(response.data.tokens.refresh,"response.data.tokens.refresh")
+      localStorage.setItem('userRole',  response.data.groups);
       setIsAuthenticated(true);
       setLoading(false)
       setUserData(response.data);

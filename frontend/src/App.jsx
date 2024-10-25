@@ -13,6 +13,7 @@ import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
 import PropertyDetails from './components/PropertyDetails.jsx';
 import Reviews from './components/Reviews.jsx';
+import AdminDashboard from './components/admin/AdminDashboard.jsx';
 
 import { AuthProvider} from './context/AuthContext.jsx';
 import ProtectedRoute from './context/ProtectedRoute.jsx';
@@ -33,11 +34,8 @@ function App() {
               <Route path="/my_favorites" element={<MyFavorites/>} />
               <Route path="/my_properties" element={<MyProperties/>} />
               <Route path="/property_details/:id" element={<PropertyDetails />} />
-              <Route path="/dashboard" element={
-                 <ProtectedRoute>
-                  <Dashboard/>
-                </ProtectedRoute>
-                } />
+              <Route path="/admin_dashboard" element={<ProtectedRoute requiredRole="admin"><AdminDashboard /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute requiredRole="user"><Dashboard /></ProtectedRoute>} />
 
               <Route path="/reviews" element={
                  <ProtectedRoute>

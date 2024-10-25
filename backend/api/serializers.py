@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from rest_framework import serializers
@@ -33,11 +34,34 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.groups.add(seller_group)
         return user
 
-class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    def validate(self, attrs):
-        data = super().validate(attrs)
+User = get_user_model()
 
-        return data
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    email = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True)
+
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        # Add custom claims if necessary
+        return token
+
+    def validate(self, attrs):
+        email = attrs.get('email')
+        password = attrs.get('password')
+
+        try:
+            user = Custom_User.objects.get(email=email)
+        except Custom_User.DoesNotExist:
+            raise serializers.ValidationError('Invalid credentials')
+
+        if not user.check_password(password):
+            raise serializers.ValidationError('Invalid credentials')
+
+        attrs['user'] = user
+        return attrs
+
+
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Custom_User
@@ -54,7 +78,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Custom_User
-        fields = ("mobile_number", "full_name", "profilePicture", "address", "city")
+        fields = ("mobile_number", "full_name", "profilePicture", "address", "city","groups")
 
 from rest_framework import serializers
 from django.contrib.auth.models import User

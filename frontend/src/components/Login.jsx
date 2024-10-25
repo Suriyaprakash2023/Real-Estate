@@ -21,14 +21,22 @@ const Login = () => {
     e.preventDefault();
     try {
       await login(email, password); // Wait for login to complete
-      navigate("/dashboard"); // Navigate to dashboard after login
+  
+      // Retrieve user role from localStorage
+      const userRole = localStorage.getItem('userRole');
+  
+      // Redirect based on role
+      if (userRole === 'admin') {
+        navigate("/admin_dashboard");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (err) {
       setPassword("");
-      setErrors(err);
-      setErrors("Login failed. Please check your credentials."); // Show error message if login fails
+      setErrors(err.message || "Login failed. Please check your credentials."); // Show error message if login fails
     }
   };
-
+  
   return (
     <>
       <Header />
