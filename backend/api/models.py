@@ -48,7 +48,6 @@ class CustomUserManager(BaseUserManager):
 class Custom_User(AbstractUser):
     objects = CustomUserManager()
 
-    # Fields as per your Firestore structure
     username = None
     last_name = None
 

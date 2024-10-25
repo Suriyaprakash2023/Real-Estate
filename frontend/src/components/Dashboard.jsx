@@ -13,6 +13,8 @@ const Dashboard = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [customerRequestsPerPage] = useState(3);
     const [isHovered, setIsHovered] = useState(false);
+    const [userDashInfo,setUserDashInfo] = useState([]);
+    const accessToken = localStorage.getItem('accessToken'); // Fetch access token
     useEffect(() => {
         const featchCustomerRequest = async () => {
             try {
@@ -57,6 +59,31 @@ const Dashboard = () => {
            }
        };
 
+useEffect(()=>{
+    const userDadhInfo = async ()=>{
+        try{
+            const response = await axios.get(`${API_BASE_URL}/userdash_info/`,{
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                }})
+
+            if (response.status === 200){
+                setUserDashInfo(response.data)
+            }else{
+                console.log("user dash info not get")
+            }
+        }catch(error){
+            console.log("user dash info not get")
+        }
+    }
+
+
+
+    userDadhInfo();
+
+},[])
+
+
   return (
     <>
       <body className="body bg-surface">
@@ -81,8 +108,8 @@ const Dashboard = () => {
                                 <div className="content-box">
                                     <div className="title-count">your Listing</div>
                                     <div className="d-flex align-items-end">
-                                        <h6 className="number" data-speed="2000" data-to="17" data-inviewport="yes">17</h6>                                   
-                                        <span className="fw-7 text-variant-2">/17 remaining</span>
+                                        <h6 className="number" data-speed="2000" data-to="17" data-inviewport="yes">{userDashInfo.total_available}</h6>                                   
+                                        <span className="fw-7 text-variant-2">/{userDashInfo.total_properties} remaining</span>
                                     </div>                              
 
                                 </div>
@@ -96,7 +123,7 @@ const Dashboard = () => {
                                 <div className="content-box">
                                     <div className="title-count">Sold Property</div>
                                     <div className="d-flex align-items-end">
-                                        <h6 className="number" data-speed="2000" data-to="1" data-inviewport="yes">1</h6>                                   
+                                        <h6 className="number" data-speed="2000" data-to="1" data-inviewport="yes">{userDashInfo.total_sold}</h6>                                   
                                     </div>                              
 
                                 </div>
@@ -109,7 +136,7 @@ const Dashboard = () => {
                                 <div className="content-box">
                                     <div className="title-count">Favorite</div>
                                     <div className="d-flex align-items-end">
-                                        <h6 className="number" data-speed="2000" data-to="1" data-inviewport="yes">1</h6>                                   
+                                        <h6 className="number" data-speed="2000" data-to="1" data-inviewport="yes">{userDashInfo.total_favorite}</h6>                                   
                                     </div>                              
 
                                 </div>
@@ -121,7 +148,7 @@ const Dashboard = () => {
                                 <div className="content-box">
                                     <div className="title-count">Reviews</div>
                                     <div className="d-flex align-items-end">
-                                        <h6 className="number" data-speed="2000" data-to="17" data-inviewport="yes">0</h6>                                   
+                                        <h6 className="number" data-speed="2000" data-to="17" data-inviewport="yes">{userDashInfo.total_reviews}</h6>                                   
                                     </div>                              
 
                                 </div>

@@ -27,6 +27,10 @@ class RegisterSerializer(serializers.ModelSerializer):
             mobile_number=validated_data['mobile_number'],
             password=validated_data['password'],
         )
+
+        # Assign the "Seller" group by default
+        seller_group, created = Group.objects.get_or_create(name='Seller')
+        user.groups.add(seller_group)
         return user
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):

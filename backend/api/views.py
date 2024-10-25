@@ -34,20 +34,20 @@ class ContactListCreateView(generics.ListCreateAPIView):
     
 
 class RegisterView(generics.CreateAPIView):
-    permission_classes = (AllowAny)
+    permission_classes = (AllowAny,)  # Add a comma here to make it a tuple
     queryset = Custom_User.objects.all()
     serializer_class = RegisterSerializer
 
     def post(self, request, *args, **kwargs):
-        
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         user = serializer.save()
         token = RefreshToken.for_user(user)
         data = serializer.data
-        data["tokens"] = {"refresh": str(token),"access": str(token.access_token)}
+        data["tokens"] = {"refresh": str(token), "access": str(token.access_token)}
         return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
+
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -331,3 +331,17 @@ class FavoritePropertys(APIView):
             return Response({"message": "Property removed from favorites"}, status=status.HTTP_204_NO_CONTENT)
         except FavoriteProperty.DoesNotExist:
             return Response({"message": "Property not found in favorites"}, status=status.HTTP_404_NOT_FOUND)
+
+class UserdashInfo(generics.ListAPIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        user = Custom_User.objects.get(email=request.user)
+        properties = Properties.objects.filter(seller=user)
+        total_properties = properties.count()
+        total_sold = properties.filter(status='Sold').count()
+        total_available = properties.filter(status='Available').count()
+        total_reviews = GuestReviews.objects.filter(property__seller=user).count()
+        total_favorite = FavoriteProperty.objects.filter(user=user).count()
+        return Response({"total_properties": total_properties, "total_sold": total_sold, "total_available": total_available,
+                         "total_reviews": total_reviews, "total_favorite": total_favorite}, status=status.HTTP_200_OK)

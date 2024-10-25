@@ -28,6 +28,7 @@ urlpatterns = [
     path('recommended_property/', RecommendedProperty.as_view(), name='recommended_property'),
     path('guest_review/', GuestReview.as_view(), name='guest_review'),
     path('favorite_property/', FavoritePropertys.as_view(), name='favorite_property'),
+    path('userdash_info/', UserdashInfo.as_view(), name='userdash_info'),
     path('favorite_property/<int:property_id>/', FavoritePropertys.as_view(), name='favorite_property_delete'),
     # for DELETE
 
