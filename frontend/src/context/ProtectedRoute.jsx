@@ -15,7 +15,7 @@ const ProtectedRoute = ({ children, requiredRole }) => {
 
   if (userRole !== requiredRole) {
     // If user doesn't have the required role, redirect to dashboard
-    return <Navigate to={userRole === 'admin' ? '/admin_dashboard' : '/dashboard'} />;
+    return <Navigate to={userRole === 'Admin' ? '/admin_dashboard' : '/dashboard'} />;
   }
 
   // If user has the required role, allow access to the component

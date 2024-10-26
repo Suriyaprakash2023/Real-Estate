@@ -828,7 +828,7 @@ const handleShareClick = () => {
                           <ul className="list-info">
                             <li className="item">
                               <span className="icon icon-bed"></span>
-                              {property.bedrooms}4 Bed
+                              {property.bedrooms} Bed
                             </li>
                             <li className="item">
                               <span className="icon icon-bathtub"></span>

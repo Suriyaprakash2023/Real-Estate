@@ -1,16 +1,19 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import API_BASE_URL from './data';
-
+import { useNavigate } from 'react-router-dom';
 
 
 // Create a context for authentication
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+
+  const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [userRole,setUserRole] = useState('')
 
   // // Fetch user data on mount if token is available
   const fetchUser = useCallback(async () => {
@@ -47,14 +50,17 @@ export const AuthProvider = ({ children }) => {
         //   "Content-Type":"Json/"
         // }
       });
+      if (response.status ===200){
+        const { tokens, user } = response.data;
+        localStorage.setItem('token', response.data.tokens);
+        localStorage.setItem('accessToken', response.data.tokens.access);
+        localStorage.setItem('userRole',  response.data.groups);
+        setIsAuthenticated(true);
+        setLoading(false)
+        setUserData(response.data);
+        setUserRole(response.data.groups)
+      }
       
-      const { tokens, user } = response.data;
-      localStorage.setItem('token', response.data.tokens);
-      localStorage.setItem('accessToken', response.data.tokens.access);
-      localStorage.setItem('userRole',  response.data.groups);
-      setIsAuthenticated(true);
-      setLoading(false)
-      setUserData(response.data);
       
     } catch (err) {
       console.error('Login failed:', err);
@@ -65,12 +71,15 @@ export const AuthProvider = ({ children }) => {
   // Logout function (clear token and reset state)
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
     setIsAuthenticated(false);
     setUserData(null);
+    navigate('/')
+    
   };
-
+console.log(isAuthenticated,"isAuthenticated")
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userData, login, logout, loading }}>
+    <AuthContext.Provider value={{ isAuthenticated, userData, login, logout, loading, userRole }}>
       {children}
     </AuthContext.Provider>
   );

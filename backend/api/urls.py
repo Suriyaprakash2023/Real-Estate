@@ -22,6 +22,7 @@ urlpatterns = [
     path('add_property/', AddPropertyView.as_view(), name='add_property'),
     path('my_properties/', UserPropertyView.as_view(), name='my_properties'),
     path('my_properties/<int:property_id>/', UserPropertyView.as_view(), name='my_properties_delete'),
+    path('sold_properties/', SoldProperties.as_view(), name='sold_properties'),
     path('properties/', PropertyView.as_view(), name='properties'),
     path('property_details/<str:id>/', PropertyDetails.as_view(), name='property_details'),
     path('customer_request/', CustomerRequests.as_view(), name='customer_request'),

@@ -1,4 +1,4 @@
-import { useState,useEffect,useContext  } from 'react'
+
 import { BrowserRouter,Route,Routes } from 'react-router-dom';
 import Index from './components/Index.jsx';
 import About from './components/About.jsx';
@@ -17,6 +17,7 @@ import AdminDashboard from './components/admin/AdminDashboard.jsx';
 
 import { AuthProvider} from './context/AuthContext.jsx';
 import ProtectedRoute from './context/ProtectedRoute.jsx';
+import SoldProperties from './components/admin/SoldProperties.jsx';
 function App() {
 
   return (
@@ -34,16 +35,13 @@ function App() {
               <Route path="/my_favorites" element={<MyFavorites/>} />
               <Route path="/my_properties" element={<MyProperties/>} />
               <Route path="/property_details/:id" element={<PropertyDetails />} />
-              <Route path="/admin_dashboard" element={<ProtectedRoute requiredRole="admin"><AdminDashboard /></ProtectedRoute>} />
-              <Route path="/dashboard" element={<ProtectedRoute requiredRole="user"><Dashboard /></ProtectedRoute>} />
+              <Route path="/admin_dashboard" element={<ProtectedRoute requiredRole="Admin"><AdminDashboard /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute requiredRole="Seller"><Dashboard /></ProtectedRoute>} />
 
-              <Route path="/reviews" element={
-                 <ProtectedRoute>
-                  <Reviews/>
-                </ProtectedRoute>
-                } />
+              <Route path="/reviews" element={<ProtectedRoute  requiredRole="Seller"><Reviews/></ProtectedRoute>} />
 
               <Route path="/add_properties" element={<AddProperties/>} />
+              <Route path='/sold_properties' element={<SoldProperties/>}/>
             </Routes>
           </AuthProvider>
       </BrowserRouter>

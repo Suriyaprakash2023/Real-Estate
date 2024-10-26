@@ -8,7 +8,9 @@ import AddHomeWorkIcon from "@mui/icons-material/AddHomeWork";
 import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
 import SkipNextIcon from "@mui/icons-material/SkipNext";
 import Swal from "sweetalert2"; // Import SweetAlert2
-const AdminDashboard = () => {
+
+const SoldProperties = () => {
+
   const [properties, setProperties] = useState([]);
   const [currentPage, setCurrentPage] = useState(1); // Track current page
   const [propertiesPerPage] = useState(3); // Set how many properties per page
@@ -18,7 +20,7 @@ const AdminDashboard = () => {
     const fetchProperties = async () => {
       try {
         const accessToken = localStorage.getItem("accessToken"); // Fetch access token
-        const response = await axios.get(`${API_BASE_URL}/properties/`, {
+        const response = await axios.get(`${API_BASE_URL}/sold_properties/`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
@@ -162,7 +164,7 @@ const AdminDashboard = () => {
                   <div className="flat-counter-v2 tf-counter">
                     <div className="counter-box">
                       <div className="box-icon w-68 round">
-                       
+                      
                         <span className="icon icon-list-dashes"></span>
                         
                       </div>
@@ -184,10 +186,7 @@ const AdminDashboard = () => {
 
                     <div className="counter-box">
                       <div className="box-icon w-68 round">
-                        <Link to='/sold_properties'> 
                         <AddHomeWorkIcon className="icon icon" />
-                        </Link>
-                       
                       </div>
                       <div className="content-box">
                         <div className="title-count">Sold Property</div>
@@ -402,7 +401,7 @@ const AdminDashboard = () => {
         </div>
       </body>
     </>
-  );
-};
+  )
+}
 
-export default AdminDashboard;
+export default SoldProperties

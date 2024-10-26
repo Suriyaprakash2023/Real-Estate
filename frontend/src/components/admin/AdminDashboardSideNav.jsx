@@ -1,69 +1,39 @@
-import {useContext } from 'react';
-import {Link} from "react-router-dom";
-import AuthContext from '../context/AuthContext';
-const DashboardSideNav = () => {
+import React from 'react'
 
-  const { logout,userRole } = useContext(AuthContext);
-
+const AdminDashboardSideNav = () => {
   return (
     <>
-      <div className="sidebar-menu-dashboard">
+       <div className="sidebar-menu-dashboard">
             <ul className="box-menu-dashboard">
                 <li className="nav-menu-item">
-
                   <Link to='/dashboard' className="nav-menu-link">
                     <span className="icon icon-dashboard"></span> 
                     Dashboards
                   </Link>
-
                 </li>
                 <li className="nav-menu-item">
-                 
-                  { userRole === 'Admin' ?(
-                      ''
-                  ):
-                  (
-                    <Link to="/my_properties" className="nav-menu-link" >
-                      <span className="icon icon-list-dashes"></span>
-                      My Properties
-                    </Link>
-                  )}
-
+                  <Link to="/my_properties" className="nav-menu-link" >
+                    <span className="icon icon-list-dashes"></span>
+                    My Properties
+                  </Link>
                 </li>
                 <li className="nav-menu-item">
-                  { userRole === 'Admin' ? (''):
-                  (
-                    <Link to='/my_favorites' className="nav-menu-link" >
+                  <Link to='/my_favorites' className="nav-menu-link" >
                     <span className="icon icon-heart"></span>
                       My Favorites
                   </Link>
-                  )}
-                  
-
                 </li>
                 <li className="nav-menu-item">
-                  { userRole === 'Admin' ?(
-                    <Link className="nav-menu-link" to='/sellers' >
+                  <Link className="nav-menu-link" to='/profile' >
                     <span className="icon icon-profile"></span>
-                    Sellers
+                      My Profile
                   </Link>
-                  ):(
-                      <Link className="nav-menu-link" to='/profile' >
-                        <span className="icon icon-profile"></span>
-                          My Profile
-                      </Link>
-                    )}
                 </li>
                 <li className="nav-menu-item">
-                  { userRole === 'Admin' ? (''):(
-                    <Link className="nav-menu-link" to='/reviews' >
+                  <Link className="nav-menu-link" to='/reviews' >
                     <span className="icon icon-review"></span>
                       Review
-                    </Link>
-
-                  )}
-                    
-
+                  </Link>
                 </li>
                 <li className="nav-menu-item">
                   <Link to="/add_properties" className="nav-menu-link" >
@@ -79,10 +49,8 @@ const DashboardSideNav = () => {
                 </li>
             </ul>
       </div>
-
     </>
   )
-  
 }
 
-export default DashboardSideNav
+export default AdminDashboardSideNav

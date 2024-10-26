@@ -16,35 +16,26 @@ class ContactSerializer(serializers.ModelSerializer):
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
+    password = serializers.CharField(write_only=True, required=True)
 
     class Meta:
         model = Custom_User
-        fields = ('email', 'mobile_number', 'password')
+        fields = ['email', 'mobile_number', 'password']
+        extra_kwargs = {
+            'password': {'write_only': True},
+        }
 
     def create(self, validated_data):
-        user = Custom_User.objects.create_user(
-            email=validated_data['email'],
-            mobile_number=validated_data['mobile_number'],
-            password=validated_data['password'],
-        )
-
-        # Assign the "Seller" group by default
+        user = Custom_User.objects.create_user(**validated_data)
         seller_group, created = Group.objects.get_or_create(name='Seller')
         user.groups.add(seller_group)
+
         return user
 
-User = get_user_model()
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    email = serializers.CharField(write_only=True)
+    email = serializers.EmailField(write_only=True)
     password = serializers.CharField(write_only=True)
-
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-        # Add custom claims if necessary
-        return token
 
     def validate(self, attrs):
         email = attrs.get('email')
@@ -52,6 +43,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         try:
             user = Custom_User.objects.get(email=email)
+            print(user,"user")
         except Custom_User.DoesNotExist:
             raise serializers.ValidationError('Invalid credentials')
 
@@ -60,6 +52,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         attrs['user'] = user
         return attrs
+
 
 
 class CustomUserSerializer(serializers.ModelSerializer):

@@ -41,11 +41,15 @@ const Register = () => {
       });
 
       if (response.status === 201) {
+        setMobileNumber("")
+        setConfirmPassword("")
+        setPassword("")
+        setEmail("")
         setSuccessMessage("Account Created Successfully..😍");
        // Wait for 5 seconds before navigating to login
       setTimeout(() => {
         navigate("/login");
-      }, 5000); // 5000 milliseconds = 5 seconds
+      }, 3000); // 5000 milliseconds = 5 seconds
       } else {
         setErrors("Please try again!");
       }

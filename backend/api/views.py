@@ -33,20 +33,13 @@ class ContactListCreateView(generics.ListCreateAPIView):
         return Response({"message":"ERROR"},serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
 
-class RegisterView(generics.CreateAPIView):
-    permission_classes = (AllowAny,)  # Add a comma here to make it a tuple
-    queryset = Custom_User.objects.all()
-    serializer_class = RegisterSerializer
-
+class RegisterView(APIView):
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        user = serializer.save()
-        token = RefreshToken.for_user(user)
-        data = serializer.data
-        data["tokens"] = {"refresh": str(token), "access": str(token.access_token)}
-        return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
+        serializer = RegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response({"message": "User registered successfully!"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -55,30 +48,26 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
     def post(self, request, *args, **kwargs):
-        users= Custom_User.objects.get(email=request.data['email'])
-        print(users,"userskjlkljkljjlkj")
-        serializer = self.get_serializer(data=request.data)
-        print(serializer)
-        if serializer.is_valid():
-            serializer.is_valid(raise_exception=True)
-
-            # Get the user instance instead of validated data
-            user = serializer.user
-
-            # Now you can pass the user instance to the RefreshToken
+        data = request.data
+        serializer = self.get_serializer(data=data)
+        if serializer.is_valid(raise_exception=True):
+            user = serializer.validated_data['user']
             token = RefreshToken.for_user(user)
 
-            # Serialize the user object
+            user_groups = user.groups.all()
+            groups = None
+            if user_groups.filter(name='Seller').exists():
+                groups = "Seller"
+            elif user.is_superuser:
+                groups = "Admin"
+            print(user_groups,"is_user.groups")
             user_serializer = UserSerializer(user)
             data = user_serializer.data
-            print(data,"data")
             data["tokens"] = {"refresh": str(token), "access": str(token.access_token)}
-
+            data["groups"] = groups
             return Response(data, status=status.HTTP_200_OK)
 
-        else:
-            print(serializer.errors,"the error")
-            return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
 class UserLogoutAPIView(GenericAPIView):
     permission_classes = (IsAuthenticated,)
@@ -180,11 +169,19 @@ class UserPropertyView(APIView):
         except Properties.DoesNotExist:
             return Response({"error": "Property not found."}, status=status.HTTP_404_NOT_FOUND)
 
+class SoldProperties(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        seller = Custom_User.objects.get(email=request.user)
+        properties = Properties.objects.filter(seller=seller, status='Sold').prefetch_related('images')
+        serializer = PropertiesSerializer(properties, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class PropertyView(generics.ListAPIView):
     permission_classes = (AllowAny,)
     def get(self, request):
-        properties = Properties.objects.all().prefetch_related('images')
+        properties = Properties.objects.filter(status='Available').prefetch_related('images')
         serializer = PropertiesSerializer(properties, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
