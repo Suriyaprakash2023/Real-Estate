@@ -204,10 +204,12 @@ const AdminDashboard = () => {
 
                     <div className="counter-box">
                       <div className="box-icon w-68 round">
+                        <Link to='/sellers'>
                         <span className="icon icon-profile"></span>
+                        </Link>
                       </div>
                       <div className="content-box">
-                        <div className="title-count">Favorite</div>
+                        <div className="title-count">Sellers</div>
                         <div className="d-flex align-items-end">
                           <h6
                             className="number"
@@ -237,7 +239,7 @@ const AdminDashboard = () => {
                   </div>
 
                   <div className="widget-box-2 wd-listing">
-                    <h6 className="title">My Properties</h6>
+                    <h6 className="title">All Properties</h6>
                     <div className="wrap-table">
                       <div className="table-responsive">
                         <table>

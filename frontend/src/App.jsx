@@ -14,6 +14,7 @@ import Register from './components/Register.jsx';
 import PropertyDetails from './components/PropertyDetails.jsx';
 import Reviews from './components/Reviews.jsx';
 import AdminDashboard from './components/admin/AdminDashboard.jsx';
+import Sellers from './components/admin/Sellers.jsx';
 
 import { AuthProvider} from './context/AuthContext.jsx';
 import ProtectedRoute from './context/ProtectedRoute.jsx';
@@ -42,6 +43,7 @@ function App() {
 
               <Route path="/add_properties" element={<AddProperties/>} />
               <Route path='/sold_properties' element={<SoldProperties/>}/>
+              <Route path='/sellers' element={<Sellers/>}/>
             </Routes>
           </AuthProvider>
       </BrowserRouter>

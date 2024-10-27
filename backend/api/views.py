@@ -82,7 +82,19 @@ class UserLogoutAPIView(GenericAPIView):
         except Exception as e:
             return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def post(self, request):
+
+        serializer = ChangePasswordSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            # Set the new password
+            request.user.set_password(serializer.validated_data['new_password'])
+            request.user.save()
+
+            return Response({"detail": "Password changed successfully"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserDetailView(APIView):
@@ -114,20 +126,22 @@ class UserDetailView(APIView):
             user.save()
             return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
 
-class ChangePasswordView(APIView):
-    permission_classes = [IsAuthenticated]
+class SellerDetailView(APIView):
+    permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
+    def get(self, request):
+        sellers = Custom_User.objects.filter(groups__name='Seller')
 
-        serializer = ChangePasswordSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            # Set the new password
-            request.user.set_password(serializer.validated_data['new_password'])
-            request.user.save()
+        serializer = SellerSerializer(sellers, many=True)
+        # print(serializer.data,"serializer.data")
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-            return Response({"detail": "Password changed successfully"}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    def patch(self, request):
+        data = request.data
+        user = Custom_User.objects.get(email=data['email'])
+        user.available = False
+        user.save()
+        return Response({"message": "User group updated successfully"}, status=status.HTTP_200_OK)
 
 class AddPropertyView(generics.CreateAPIView):
     permission_classes = (IsAuthenticated,)
@@ -173,8 +187,7 @@ class SoldProperties(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        seller = Custom_User.objects.get(email=request.user)
-        properties = Properties.objects.filter(seller=seller, status='Sold').prefetch_related('images')
+        properties = Properties.objects.filter(status='Sold').prefetch_related('images')
         serializer = PropertiesSerializer(properties, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

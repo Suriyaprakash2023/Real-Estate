@@ -18,6 +18,7 @@ urlpatterns = [
     path('',IndexView.as_view(),name="index"),
     path('contact',ContactListCreateView.as_view(),name="contact"),
     path('user/',UserDetailView.as_view(),name="user"),
+    path('sellers/', SellerDetailView.as_view(), name="sellers"),
     path('change_password/', ChangePasswordView.as_view(), name='change_password'),
     path('add_property/', AddPropertyView.as_view(), name='add_property'),
     path('my_properties/', UserPropertyView.as_view(), name='my_properties'),

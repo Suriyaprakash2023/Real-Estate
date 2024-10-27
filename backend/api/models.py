@@ -64,6 +64,13 @@ class Custom_User(AbstractUser):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
+    @property
+    def property_count(self):
+        return self.properties.count()  # Count of properties listed by the user
+
+    @property
+    def sold_property_count(self):
+        return self.properties.filter(status="Sold").count()  # Count of properties sold by the user
 
     def save(self, *args, **kwargs):
         if not self.referral_code:

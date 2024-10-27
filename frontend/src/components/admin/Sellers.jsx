@@ -1,3 +1,4 @@
+
 import  { useState, useEffect } from "react";
 import Header from "../Header";
 import axios from "axios";
@@ -9,25 +10,27 @@ import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
 import SkipNextIcon from "@mui/icons-material/SkipNext";
 import Swal from "sweetalert2"; // Import SweetAlert2
 
-const SoldProperties = () => {
+const Sellers = () => {
 
-  const [properties, setProperties] = useState([]);
+  const [sellers,setSellers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1); // Track current page
-  const [propertiesPerPage] = useState(3); // Set how many properties per page
+  const [sellersPerPage] = useState(2); // Set how many properties per page
   const [isHovered, setIsHovered] = useState(false);
   // Fetch properties on component mount
+
+
   useEffect(() => {
-    const fetchProperties = async () => {
+    const fetchSellers = async () => {
       try {
         const accessToken = localStorage.getItem("accessToken"); // Fetch access token
-        const response = await axios.get(`${API_BASE_URL}/sold_properties/`, {
+        const response = await axios.get(`${API_BASE_URL}/sellers/`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         });
 
         if (response.status === 200) {
-          setProperties(response.data); // Update state with fetched properties
+          setSellers(response.data); // Update state with fetched properties
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -35,19 +38,21 @@ const SoldProperties = () => {
       }
     };
 
-    fetchProperties();
+    fetchSellers();
   }, []);
-console.log(properties,"properties")
+
+console.log(sellers.profilePicture,"profilePicture")
+
   // Get current properties for the current page
-  const indexOfLastProperty = currentPage * propertiesPerPage;
-  const indexOfFirstProperty = indexOfLastProperty - propertiesPerPage;
-  const currentProperties = properties.slice(
-    indexOfFirstProperty,
-    indexOfLastProperty
+  const indexOfLastSellers = currentPage * sellersPerPage;
+  const indexOfFirstSellers = indexOfLastSellers - sellersPerPage;
+  const currentSellers = sellers.slice(
+    indexOfFirstSellers,
+    indexOfLastSellers
   );
 
   // Total number of pages
-  const totalPages = Math.ceil(properties.length / propertiesPerPage);
+  const totalPages = Math.ceil(sellers.length / sellersPerPage);
 
   // Change page function
   const paginate = (pageNumber) => {
@@ -93,8 +98,8 @@ console.log(properties,"properties")
           }
         );
         if (response.status === 204) {
-          setProperties(
-            properties.filter((property) => property.id !== propertyId)
+          setSellers(
+            sellers.filter((property) => property.id !== propertyId)
           );
 
           // Show success message
@@ -109,25 +114,25 @@ console.log(properties,"properties")
     }
   };
   // Delete a property with confirmation
-  const soldProperty = async (propertyId) => {
+  const blockSeller = async (email) => {
     // Show SweetAlert confirmation dialog
     const result = await Swal.fire({
-      title: "Are you sure..😍",
-      text: "You won't be able to sold this!",
-      icon: "info",
+      title: "Are you sure..😒",
+      text: "You won't be Block the Seller!",
+      icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#008000",
       cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, sold it!",
+      confirmButtonText: "Yes, block it!",
     });
 
     if (result.isConfirmed) {
       try {
         const accessToken = localStorage.getItem("accessToken");
         console.log(accessToken, "myaccessToken");
-        const response = await axios.post(
-          `${API_BASE_URL}/my_properties/`,
-          { propertyId },
+        const response = await axios.patch(
+          `${API_BASE_URL}/sellers/`,
+          { email },
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -147,7 +152,7 @@ console.log(properties,"properties")
       }
     }
   };
-
+  
   return (
     <>
       <body className="body bg-surface">
@@ -186,8 +191,9 @@ console.log(properties,"properties")
 
                     <div className="counter-box">
                       <div className="box-icon w-68 round">
-                        <Link to='/sold_properties'></Link>
+                        <Link to='/sold_properties'>
                         <AddHomeWorkIcon className="icon icon" />
+                        </Link>
                       </div>
                       <div className="content-box">
                         <div className="title-count">Sold Property</div>
@@ -204,9 +210,7 @@ console.log(properties,"properties")
 
                     <div className="counter-box">
                       <div className="box-icon w-68 round">
-                        <Link to='/sellers'>
                         <span className="icon icon-profile"></span>
-                        </Link>
                       </div>
                       <div className="content-box">
                         <div className="title-count">Sellers</div>
@@ -239,83 +243,83 @@ console.log(properties,"properties")
                   </div>
 
                   <div className="widget-box-2 wd-listing">
-                    <h6 className="title">Sold Properties</h6>
+                    <h6 className="title">Sellers Details</h6>
                     <div className="wrap-table">
                       <div className="table-responsive">
                         <table>
                           <thead>
                             <tr>
-                              <th>Title</th>
-                              <th>Date Published</th>
-                              <th>Property Status</th>
-                              <th>Property Type</th>
+                              <th>Seller</th>
+                              <th>Date of Join</th>
+                              <th>number of Property</th>
+                              <th>Sold Property </th>
                               <th>Action</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {currentProperties.map((property) => (
-                              <tr className="file-delete" key={property.id}>
+                            {currentSellers.map((sellers) => (
+                              <tr className="file-delete" key={sellers.id}>
                                 <td>
                                   <div className="listing-box">
                                     <div className="images">
                                       <img
-                                        src={`${API_BASE_URL}/${property.images[0].image1}`}
-                                        alt="images"
+                                        src={`${API_BASE_URL}/${sellers.profilePicture}`}
+                                        alt="images" className="w-100 h-50 rounded"
                                       />
+
                                     </div>
                                     <div className="content">
                                       <div className="title">
                                         <Link
-                                          to={`/property_details/${property.id}`}
+                                          to={`/property_details/`}
                                           className="link"
                                         >
-                                          {property.title}
+                                          {sellers.full_name}
                                         </Link>
                                       </div>
                                       <div className="text-date">
-                                        {property.description.slice(0, 30)}
+                                      {sellers.mobile_number}
+                                        
                                       </div>
                                       <div className="text-1 fw-7">
-                                        ₹{property.price}
+                                      {sellers.address.slice(0, 30)}
                                       </div>
                                     </div>
                                   </div>
                                 </td>
                                 <td>
-                                  <span>{property.listed_date}</span>
+                                  <span>{sellers.created_at.slice(0, 10)}</span>
                                 </td>
                                 <td>
+                                {sellers.property_count == 0 ? "None" :sellers.property_count }
                                   <div className="status-wrap">
+                                   
                                     <a href="#" className="btn-status">
-                                      {property.propertyStatus}
+                                      view
                                     </a>
                                   </div>
                                 </td>
                                 <td>
-                                  <span>{property.propertyType}</span>
+                                  <span>  {sellers.sold_property_count == 0 ? 'None' : sellers.sold_property_count  } </span>
                                 </td>
                                 <td>
                                   <ul className="list-action">
-                                    <li>
-                                      <a className="item">
-                                        <i className="icon icon-edit"></i>Edit
-                                      </a>
-                                    </li>
+                                   
                                     <li>
                                       <a
                                         className="btn btn-success"
                                         onClick={() =>
-                                          soldProperty(property.id)
+                                          blockSeller(sellers.email)
                                         }
                                       >
-                                        <i className="icon icon-sold"></i>Sold
+                                        <i className="icon icon-sold"></i>Block
                                       </a>
                                     </li>
                                     <li>
                                       <button
                                         className="btn btn-danger"
                                         onClick={() =>
-                                          deleteProperty(property.id)
+                                          deleteProperty(sellers.email)
                                         }
                                       >
                                         <i className="icon icon-trash"></i>{" "}
@@ -407,4 +411,4 @@ console.log(properties,"properties")
   )
 }
 
-export default SoldProperties
+export default Sellers

@@ -73,8 +73,14 @@ class UserSerializer(serializers.ModelSerializer):
         model = Custom_User
         fields = ("mobile_number", "full_name", "profilePicture", "address", "city","groups")
 
+class SellerSerializer(serializers.ModelSerializer):
+    profilePicture = serializers.ImageField(required=False)
+
+    class Meta:
+        model = Custom_User
+        fields = ("email","mobile_number", "full_name", "profilePicture", "address", "city", "groups","created_at","property_count","sold_property_count")
+
 from rest_framework import serializers
-from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 
