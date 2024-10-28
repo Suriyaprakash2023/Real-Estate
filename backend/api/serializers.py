@@ -78,7 +78,7 @@ class SellerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Custom_User
-        fields = ("email","mobile_number", "full_name", "profilePicture", "address", "city", "groups","created_at","property_count","sold_property_count")
+        fields = ("id","email","mobile_number", "full_name", "profilePicture", "address", "city", "groups","created_at","property_count","sold_property_count")
 
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password

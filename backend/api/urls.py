@@ -18,7 +18,8 @@ urlpatterns = [
     path('',IndexView.as_view(),name="index"),
     path('contact',ContactListCreateView.as_view(),name="contact"),
     path('user/',UserDetailView.as_view(),name="user"),
-    path('sellers/', SellerDetailView.as_view(), name="sellers"),
+    path('sellers/', SellerAPIView.as_view(), name="sellers"),
+    path('sellers/<str:id>/', SellerDetailsAPIView.as_view(), name="sellers_details"),
     path('change_password/', ChangePasswordView.as_view(), name='change_password'),
     path('add_property/', AddPropertyView.as_view(), name='add_property'),
     path('my_properties/', UserPropertyView.as_view(), name='my_properties'),
@@ -31,6 +32,8 @@ urlpatterns = [
     path('guest_review/', GuestReview.as_view(), name='guest_review'),
     path('favorite_property/', FavoritePropertys.as_view(), name='favorite_property'),
     path('userdash_info/', UserdashInfo.as_view(), name='userdash_info'),
+    path('admindash_info/', AdmindashInfo.as_view(), name='admindash_info'),
+
     path('favorite_property/<int:property_id>/', FavoritePropertys.as_view(), name='favorite_property_delete'),
     # for DELETE
 

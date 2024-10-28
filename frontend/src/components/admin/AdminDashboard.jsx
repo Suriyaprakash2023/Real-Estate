@@ -10,6 +10,7 @@ import SkipNextIcon from "@mui/icons-material/SkipNext";
 import Swal from "sweetalert2"; // Import SweetAlert2
 const AdminDashboard = () => {
   const [properties, setProperties] = useState([]);
+  const [dashInfo,setDashInfo] = useState('');
   const [currentPage, setCurrentPage] = useState(1); // Track current page
   const [propertiesPerPage] = useState(3); // Set how many properties per page
   const [isHovered, setIsHovered] = useState(false);
@@ -33,6 +34,28 @@ const AdminDashboard = () => {
       }
     };
 
+    const fetchAdminDashInfo = async () => {
+      try {
+        const accessToken = localStorage.getItem("accessToken"); // Fetch access token
+        const response = await axios.get(`${API_BASE_URL}/admindash_info/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        if (response.status === 200) {
+          setDashInfo(response.data); // Update state with fetched properties
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        alert("Error loading properties");
+      }
+    };
+
+
+
+
+    fetchAdminDashInfo();
     fetchProperties();
   }, []);
 
@@ -145,7 +168,7 @@ const AdminDashboard = () => {
       }
     }
   };
-
+console.log(dashInfo,"dasj")
   return (
     <>
       <body className="body bg-surface">
@@ -167,16 +190,16 @@ const AdminDashboard = () => {
                         
                       </div>
                       <div className="content-box">
-                        <div className="title-count">your Listing</div>
+                        <div className="title-count">Total Listing</div>
                         <div className="d-flex align-items-end">
                           <h6
                             className="number"
                             data-speed="2000"
                             data-to="17"
                             data-inviewport="yes"
-                          ></h6>
+                          >{dashInfo.total_available}</h6>
                           <span className="fw-7 text-variant-2">
-                            /remaining
+                          /{dashInfo.total_properties} remaining
                           </span>
                         </div>
                       </div>
@@ -190,7 +213,7 @@ const AdminDashboard = () => {
                        
                       </div>
                       <div className="content-box">
-                        <div className="title-count">Sold Property</div>
+                        <div className="title-count">{dashInfo.total_sold} Sold Property</div>
                         <div className="d-flex align-items-end">
                           <h6
                             className="number"
@@ -209,7 +232,7 @@ const AdminDashboard = () => {
                         </Link>
                       </div>
                       <div className="content-box">
-                        <div className="title-count">Sellers</div>
+                        <div className="title-count">{dashInfo.total_sellers} Sellers</div>
                         <div className="d-flex align-items-end">
                           <h6
                             className="number"
@@ -225,7 +248,7 @@ const AdminDashboard = () => {
                         <span className="icon icon-review"></span>
                       </div>
                       <div className="content-box">
-                        <div className="title-count">Reviews</div>
+                        <div className="title-count">{dashInfo.total_reviews} Reviews</div>
                         <div className="d-flex align-items-end">
                           <h6
                             className="number"
@@ -269,11 +292,11 @@ const AdminDashboard = () => {
                                           to={`/property_details/${property.id}`}
                                           className="link"
                                         >
-                                          {property.title}
+                                          {property.title.slice(0, 33)}...
                                         </Link>
                                       </div>
                                       <div className="text-date">
-                                        {property.description.slice(0, 30)}
+                                        {property.description.slice(0, 33)}...
                                       </div>
                                       <div className="text-1 fw-7">
                                         ₹{property.price}

@@ -19,6 +19,8 @@ import Sellers from './components/admin/Sellers.jsx';
 import { AuthProvider} from './context/AuthContext.jsx';
 import ProtectedRoute from './context/ProtectedRoute.jsx';
 import SoldProperties from './components/admin/SoldProperties.jsx';
+import SellerProperties from './components/admin/SellerProperties.jsx';
+import EditProperties from './components/admin/EditProperties.jsx';
 function App() {
 
   return (
@@ -44,6 +46,8 @@ function App() {
               <Route path="/add_properties" element={<AddProperties/>} />
               <Route path='/sold_properties' element={<SoldProperties/>}/>
               <Route path='/sellers' element={<Sellers/>}/>
+              <Route path='/sellers/:id' element={<SellerProperties/>}/>
+              <Route path='/edit_property/:id' element={<EditProperties/>}/>
             </Routes>
           </AuthProvider>
       </BrowserRouter>

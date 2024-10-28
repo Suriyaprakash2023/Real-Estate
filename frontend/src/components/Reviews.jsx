@@ -121,7 +121,7 @@ const Reviews = () => {
                                 </td>
                                 <td>
                                   <span>
-                                    {property.created_at.slice(0, 17)}
+                                    {property.created_at.slice(0, 16)}
                                   </span>
                                 </td>
                                 <td>

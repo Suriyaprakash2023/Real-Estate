@@ -1,19 +1,42 @@
-import  { useState, useEffect } from 'react';
-import Header from './Header';
-import DashboardSideNav from './DashboardSideNav';
+import { useState, useEffect } from 'react';
+import Header from '../Header';
+import DashboardSideNav from '../DashboardSideNav';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
-import API_BASE_URL from '../context/data';
+import { Link,useParams } from 'react-router-dom';
+import API_BASE_URL from '../../context/data';
 import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
 import SkipNextIcon from '@mui/icons-material/SkipNext';
 
 import Swal from 'sweetalert2'; // Import SweetAlert2
-const MyProperties = () => {
+const SellerProperties = () => {
+    const { id } = useParams();
     const [properties, setProperties] = useState([]);
+    const [userInfo,setUserInfo]= useState();
     const [currentPage, setCurrentPage] = useState(1); // Track current page
     const [propertiesPerPage] = useState(3); // Set how many properties per page
     const [isHovered, setIsHovered] = useState(false);
-    // Fetch properties on component mount
+    
+    useEffect(() => {
+      // Fetch the property details from the API using the ID
+      const fetchPropertyDetails = async () => {
+        try {
+          const response = await axios.get(
+            `${API_BASE_URL}/sellers/${id}`
+          );
+          if (response.status === 200) {
+            setProperties(response.data.properties)
+            setUserInfo(response.data.seller)
+          }
+        } catch (error) {
+          console.error("Error fetching property details:", error);
+          
+        }
+      };
+  
+      fetchPropertyDetails();
+    }, [id]);
+
+
     useEffect(() => {
         const fetchMyProperties = async () => {
             try {
@@ -138,6 +161,7 @@ const MyProperties = () => {
                 }
             }
         };
+        console.log(properties,"properties")
     return (
         <>
             <body className="body bg-surface">
@@ -149,23 +173,7 @@ const MyProperties = () => {
                             <div className="main-content">
                                 <div className="main-content-inner wrap-dashboard-content">
                                     <div className="row">
-                                        <div className="col-md-3">
-                                            <fieldset className="box-fieldset">
-                                                <label htmlFor="title">
-                                                    Post Status:<span>*</span>
-                                                </label>
-                                                <div className="nice-select" tabIndex="0">
-                                                    <span className="current">Select</span>
-                                                    <ul className="list">
-                                                        <li data-value="1" className="option selected">Select</li>
-                                                        <li data-value="2" className="option">Publish</li>
-                                                        <li data-value="3" className="option">Pending</li>
-                                                        <li data-value="3" className="option">Hidden</li>
-                                                        <li data-value="3" className="option">Sold</li>
-                                                    </ul>
-                                                </div>
-                                            </fieldset>
-                                        </div>
+                                        
                                         <div className="col-md-9">
                                             <fieldset className="box-fieldset">
                                                 <label htmlFor="title">
@@ -174,10 +182,21 @@ const MyProperties = () => {
                                                 <input type="text" className="form-control style-1" placeholder="Search by title" />
                                             </fieldset>
                                         </div>
+                                        <div className="col-1"></div>
+                                        <div className="col-1">
+                                          <fieldset className="box-fieldset">
+                                                  <label htmlFor="title">
+                                                      Submit:<span>*</span>
+                                                  </label>
+                                                
+                                          </fieldset>
+                                          <button className='btn btn-info text-white'>search</button>
+                                        </div>
+                                        <div className="col-1"></div>
                                     </div>
 
                                     <div className="widget-box-2 wd-listing">
-                                        <h6 className="title">My Properties</h6>
+                                        <h6 className="title">Seller Properties</h6>
                                         <div className="wrap-table">
                                             <div className="table-responsive">
                                                 <table>
@@ -200,9 +219,9 @@ const MyProperties = () => {
                                                                         </div>
                                                                         <div className="content">
                                                                             <div className="title">
-                                                                                <Link to={`/property_details/${property.id}`} className="link">{property.title}</Link>
+                                                                                <Link to={`/property_details/${property.id}`} className="link">{property.title.slice(0, 33)}...</Link>
                                                                             </div>
-                                                                            <div className="text-date">{property.description.slice(0, 30)}</div>
+                                                                            <div className="text-date">{property.description.slice(0, 33)}...</div>
                                                                             <div className="text-1 fw-7">₹{property.price}</div>
                                                                         </div>
                                                                     </div>
@@ -220,8 +239,14 @@ const MyProperties = () => {
                                                                 </td>
                                                                 <td>
                                                                     <ul className="list-action">
-                                                                        <li><a className="item"><i className="icon icon-edit"></i>Edit</a></li>
-                                                                        <li><a className="btn btn-success" onClick={() => soldProperty(property.id)}><i className="icon icon-sold"></i>Sold</a></li>
+                                                                        <li>
+                                                                          <Link className="btn btn-warning text-white"
+                                                                           to={`/edit_property/${property.id}?email=${userInfo.email}`} >
+                                                                            <i className="icon icon-edit"></i> Edit 
+                                                                          </Link>
+                                                                        </li>
+                                                                        <li>
+                                                                          <a className="btn btn-success" onClick={() => soldProperty(property.id)}><i className="icon icon-sold"></i>Sold</a></li>
                                                                         <li>
                                                                             <button
                                                                                 className="btn btn-danger"
@@ -309,4 +334,4 @@ const MyProperties = () => {
     );
 };
 
-export default MyProperties;
+export default SellerProperties;

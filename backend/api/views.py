@@ -126,14 +126,13 @@ class UserDetailView(APIView):
             user.save()
             return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
 
-class SellerDetailView(APIView):
+class SellerAPIView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         sellers = Custom_User.objects.filter(groups__name='Seller')
 
         serializer = SellerSerializer(sellers, many=True)
-        # print(serializer.data,"serializer.data")
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request):
@@ -142,6 +141,25 @@ class SellerDetailView(APIView):
         user.available = False
         user.save()
         return Response({"message": "User group updated successfully"}, status=status.HTTP_200_OK)
+
+class SellerDetailsAPIView(APIView):
+    permission_classes = (AllowAny,)
+
+    def get(self, request, id):
+        seller_id = Custom_User.objects.get(id=id)
+        seller =SellerSerializer(seller_id)
+        properties = Properties.objects.filter(seller=seller_id, status='Available').prefetch_related('images')
+        properties = PropertiesSerializer(properties,many=True)
+
+        return Response({"properties":properties.data,"seller":seller.data} , status=status.HTTP_200_OK)
+
+    def patch(self, request, id):
+        data = request.data
+        user = Custom_User.objects.get(id=id)
+        user.available = False
+        user.save()
+        return Response({"message": "User group updated successfully"}, status=status.HTTP_200_OK)
+
 
 class AddPropertyView(generics.CreateAPIView):
     permission_classes = (IsAuthenticated,)
@@ -359,3 +377,19 @@ class UserdashInfo(generics.ListAPIView):
         total_favorite = FavoriteProperty.objects.filter(user=user).count()
         return Response({"total_properties": total_properties, "total_sold": total_sold, "total_available": total_available,
                          "total_reviews": total_reviews, "total_favorite": total_favorite}, status=status.HTTP_200_OK)
+
+
+class AdmindashInfo(generics.ListAPIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+
+        properties = Properties.objects.all()
+        total_properties = properties.count()
+        total_sold = properties.filter(status='Sold').count()
+        total_available = properties.filter(status='Available').count()
+        total_reviews = GuestReviews.objects.all().count()
+        total_sellers = Custom_User.objects.filter(groups__name='Seller').count()
+
+        return Response({"total_properties": total_properties, "total_sold": total_sold, "total_available": total_available,
+                         "total_reviews": total_reviews, "total_sellers": total_sellers}, status=status.HTTP_200_OK)
