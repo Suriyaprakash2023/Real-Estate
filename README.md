@@ -37,7 +37,7 @@ To run this project locally, follow these instructions.
 
     ```bash
     git clone https://github.com/your-username/FoodKing.git](https://github.com/Suriyaprakash2023/FoodKing.git)
-    cd FoodKing/backend
+    cd FoodKing/server
     ```
 
 2. Set up a virtual environment (optional but recommended):
@@ -78,7 +78,7 @@ To run this project locally, follow these instructions.
 1. Navigate to the frontend folder:
 
     ```bash
-    cd ../frontend
+    cd ../client 
     ```
 
 2. Install the required dependencies:
